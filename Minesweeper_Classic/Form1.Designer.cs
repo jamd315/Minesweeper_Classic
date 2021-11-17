@@ -50,15 +50,17 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMinesweeperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.test1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.pnlTimer = new System.Windows.Forms.Panel();
             this.picTimerO = new System.Windows.Forms.PictureBox();
             this.picTimerT = new System.Windows.Forms.PictureBox();
             this.picTimerH = new System.Windows.Forms.PictureBox();
-            this.pnlBombCount = new System.Windows.Forms.Panel();
-            this.picBombCountO = new System.Windows.Forms.PictureBox();
-            this.picBombCountT = new System.Windows.Forms.PictureBox();
-            this.picBombCountH = new System.Windows.Forms.PictureBox();
+            this.pnlFlagCount = new System.Windows.Forms.Panel();
+            this.picFlagCountO = new System.Windows.Forms.PictureBox();
+            this.picFlagCountT = new System.Windows.Forms.PictureBox();
+            this.picFlagCountH = new System.Windows.Forms.PictureBox();
             this.picFace = new System.Windows.Forms.PictureBox();
             this.imgFaces = new System.Windows.Forms.ImageList(this.components);
             this.imgFaces_BW = new System.Windows.Forms.ImageList(this.components);
@@ -67,18 +69,16 @@
             this.imgTiles = new System.Windows.Forms.ImageList(this.components);
             this.imgTiles_BW = new System.Windows.Forms.ImageList(this.components);
             this.pnlGameboard = new System.Windows.Forms.Panel();
-            this.test1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlTimer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTimerO)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picTimerT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picTimerH)).BeginInit();
-            this.pnlBombCount.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBombCountO)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBombCountT)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBombCountH)).BeginInit();
+            this.pnlFlagCount.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFlagCountO)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFlagCountT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFlagCountH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFace)).BeginInit();
             this.SuspendLayout();
             // 
@@ -124,14 +124,14 @@
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeyDisplayString = "F2";
             this.newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
             // 
             // beginnerToolStripMenuItem
             // 
@@ -139,7 +139,7 @@
             this.beginnerToolStripMenuItem.CheckOnClick = true;
             this.beginnerToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.beginnerToolStripMenuItem.Name = "beginnerToolStripMenuItem";
-            this.beginnerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.beginnerToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.beginnerToolStripMenuItem.Text = "Beginner";
             this.beginnerToolStripMenuItem.Click += new System.EventHandler(this.beginnerToolStripMenuItem_Click);
             // 
@@ -147,7 +147,7 @@
             // 
             this.intermediateToolStripMenuItem.CheckOnClick = true;
             this.intermediateToolStripMenuItem.Name = "intermediateToolStripMenuItem";
-            this.intermediateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.intermediateToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.intermediateToolStripMenuItem.Text = "Intermediate";
             this.intermediateToolStripMenuItem.Click += new System.EventHandler(this.intermediateToolStripMenuItem_Click);
             // 
@@ -155,21 +155,21 @@
             // 
             this.expertToolStripMenuItem.CheckOnClick = true;
             this.expertToolStripMenuItem.Name = "expertToolStripMenuItem";
-            this.expertToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expertToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.expertToolStripMenuItem.Text = "Expert";
             this.expertToolStripMenuItem.Click += new System.EventHandler(this.expertToolStripMenuItem_Click);
             // 
             // customToolStripMenuItem
             // 
             this.customToolStripMenuItem.Name = "customToolStripMenuItem";
-            this.customToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.customToolStripMenuItem.Text = "Custom...";
             this.customToolStripMenuItem.Click += new System.EventHandler(this.customToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(138, 6);
             // 
             // marksToolStripMenuItem
             // 
@@ -177,7 +177,7 @@
             this.marksToolStripMenuItem.CheckOnClick = true;
             this.marksToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.marksToolStripMenuItem.Name = "marksToolStripMenuItem";
-            this.marksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.marksToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.marksToolStripMenuItem.Text = "Marks (?)";
             // 
             // colorsToolStripMenuItem
@@ -186,37 +186,37 @@
             this.colorsToolStripMenuItem.CheckOnClick = true;
             this.colorsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.colorsToolStripMenuItem.Name = "colorsToolStripMenuItem";
-            this.colorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.colorsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.colorsToolStripMenuItem.Text = "Colors";
             // 
             // soundToolStripMenuItem
             // 
             this.soundToolStripMenuItem.CheckOnClick = true;
             this.soundToolStripMenuItem.Name = "soundToolStripMenuItem";
-            this.soundToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.soundToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.soundToolStripMenuItem.Text = "Sound";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(138, 6);
             // 
             // bestTimesToolStripMenuItem
             // 
             this.bestTimesToolStripMenuItem.Name = "bestTimesToolStripMenuItem";
-            this.bestTimesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bestTimesToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.bestTimesToolStripMenuItem.Text = "Best Times";
             this.bestTimesToolStripMenuItem.Click += new System.EventHandler(this.bestTimesToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(138, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -244,11 +244,25 @@
             this.aboutMinesweeperToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutMinesweeperToolStripMenuItem.Text = "About Minesweeper";
             // 
+            // test1ToolStripMenuItem
+            // 
+            this.test1ToolStripMenuItem.Name = "test1ToolStripMenuItem";
+            this.test1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.test1ToolStripMenuItem.Text = "Test1";
+            this.test1ToolStripMenuItem.Click += new System.EventHandler(this.test1ToolStripMenuItem_Click);
+            // 
+            // test2ToolStripMenuItem
+            // 
+            this.test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
+            this.test2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.test2ToolStripMenuItem.Text = "Test2";
+            this.test2ToolStripMenuItem.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
+            // 
             // pnlHeader
             // 
             this.pnlHeader.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlHeader.Controls.Add(this.pnlTimer);
-            this.pnlHeader.Controls.Add(this.pnlBombCount);
+            this.pnlHeader.Controls.Add(this.pnlFlagCount);
             this.pnlHeader.Controls.Add(this.picFace);
             this.pnlHeader.Location = new System.Drawing.Point(7, 32);
             this.pnlHeader.Margin = new System.Windows.Forms.Padding(0);
@@ -305,52 +319,52 @@
             this.picTimerH.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
             this.picTimerH.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
-            // pnlBombCount
+            // pnlFlagCount
             // 
-            this.pnlBombCount.Controls.Add(this.picBombCountO);
-            this.pnlBombCount.Controls.Add(this.picBombCountT);
-            this.pnlBombCount.Controls.Add(this.picBombCountH);
-            this.pnlBombCount.Location = new System.Drawing.Point(3, 3);
-            this.pnlBombCount.Margin = new System.Windows.Forms.Padding(0);
-            this.pnlBombCount.Name = "pnlBombCount";
-            this.pnlBombCount.Size = new System.Drawing.Size(39, 23);
-            this.pnlBombCount.TabIndex = 0;
+            this.pnlFlagCount.Controls.Add(this.picFlagCountO);
+            this.pnlFlagCount.Controls.Add(this.picFlagCountT);
+            this.pnlFlagCount.Controls.Add(this.picFlagCountH);
+            this.pnlFlagCount.Location = new System.Drawing.Point(3, 3);
+            this.pnlFlagCount.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlFlagCount.Name = "pnlFlagCount";
+            this.pnlFlagCount.Size = new System.Drawing.Size(39, 23);
+            this.pnlFlagCount.TabIndex = 0;
             // 
-            // picBombCountO
+            // picFlagCountO
             // 
-            this.picBombCountO.Location = new System.Drawing.Point(26, 0);
-            this.picBombCountO.Margin = new System.Windows.Forms.Padding(0);
-            this.picBombCountO.Name = "picBombCountO";
-            this.picBombCountO.Size = new System.Drawing.Size(13, 23);
-            this.picBombCountO.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picBombCountO.TabIndex = 2;
-            this.picBombCountO.TabStop = false;
-            this.picBombCountO.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
-            this.picBombCountO.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
+            this.picFlagCountO.Location = new System.Drawing.Point(26, 0);
+            this.picFlagCountO.Margin = new System.Windows.Forms.Padding(0);
+            this.picFlagCountO.Name = "picFlagCountO";
+            this.picFlagCountO.Size = new System.Drawing.Size(13, 23);
+            this.picFlagCountO.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picFlagCountO.TabIndex = 2;
+            this.picFlagCountO.TabStop = false;
+            this.picFlagCountO.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
+            this.picFlagCountO.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
-            // picBombCountT
+            // picFlagCountT
             // 
-            this.picBombCountT.Location = new System.Drawing.Point(13, 0);
-            this.picBombCountT.Margin = new System.Windows.Forms.Padding(0);
-            this.picBombCountT.Name = "picBombCountT";
-            this.picBombCountT.Size = new System.Drawing.Size(13, 23);
-            this.picBombCountT.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picBombCountT.TabIndex = 1;
-            this.picBombCountT.TabStop = false;
-            this.picBombCountT.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
-            this.picBombCountT.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
+            this.picFlagCountT.Location = new System.Drawing.Point(13, 0);
+            this.picFlagCountT.Margin = new System.Windows.Forms.Padding(0);
+            this.picFlagCountT.Name = "picFlagCountT";
+            this.picFlagCountT.Size = new System.Drawing.Size(13, 23);
+            this.picFlagCountT.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picFlagCountT.TabIndex = 1;
+            this.picFlagCountT.TabStop = false;
+            this.picFlagCountT.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
+            this.picFlagCountT.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
-            // picBombCountH
+            // picFlagCountH
             // 
-            this.picBombCountH.Location = new System.Drawing.Point(0, 0);
-            this.picBombCountH.Margin = new System.Windows.Forms.Padding(0);
-            this.picBombCountH.Name = "picBombCountH";
-            this.picBombCountH.Size = new System.Drawing.Size(13, 23);
-            this.picBombCountH.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picBombCountH.TabIndex = 0;
-            this.picBombCountH.TabStop = false;
-            this.picBombCountH.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
-            this.picBombCountH.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
+            this.picFlagCountH.Location = new System.Drawing.Point(0, 0);
+            this.picFlagCountH.Margin = new System.Windows.Forms.Padding(0);
+            this.picFlagCountH.Name = "picFlagCountH";
+            this.picFlagCountH.Size = new System.Drawing.Size(13, 23);
+            this.picFlagCountH.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picFlagCountH.TabIndex = 0;
+            this.picFlagCountH.TabStop = false;
+            this.picFlagCountH.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
+            this.picFlagCountH.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
             // picFace
             // 
@@ -473,20 +487,6 @@
             this.pnlGameboard.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
             this.pnlGameboard.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
-            // test1ToolStripMenuItem
-            // 
-            this.test1ToolStripMenuItem.Name = "test1ToolStripMenuItem";
-            this.test1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.test1ToolStripMenuItem.Text = "Test1";
-            this.test1ToolStripMenuItem.Click += new System.EventHandler(this.test1ToolStripMenuItem_Click);
-            // 
-            // test2ToolStripMenuItem
-            // 
-            this.test2ToolStripMenuItem.Name = "test2ToolStripMenuItem";
-            this.test2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.test2ToolStripMenuItem.Text = "Test2";
-            this.test2ToolStripMenuItem.Click += new System.EventHandler(this.test2ToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -514,11 +514,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.picTimerO)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picTimerT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picTimerH)).EndInit();
-            this.pnlBombCount.ResumeLayout(false);
-            this.pnlBombCount.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBombCountO)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBombCountT)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBombCountH)).EndInit();
+            this.pnlFlagCount.ResumeLayout(false);
+            this.pnlFlagCount.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFlagCountO)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFlagCountT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFlagCountH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFace)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -555,10 +555,10 @@
         private System.Windows.Forms.ImageList imgTiles_BW;
         private System.Windows.Forms.PictureBox picFace;
         private System.Windows.Forms.Panel pnlGameboard;
-        private System.Windows.Forms.Panel pnlBombCount;
-        private System.Windows.Forms.PictureBox picBombCountO;
-        private System.Windows.Forms.PictureBox picBombCountT;
-        private System.Windows.Forms.PictureBox picBombCountH;
+        private System.Windows.Forms.Panel pnlFlagCount;
+        private System.Windows.Forms.PictureBox picFlagCountO;
+        private System.Windows.Forms.PictureBox picFlagCountT;
+        private System.Windows.Forms.PictureBox picFlagCountH;
         private System.Windows.Forms.Panel pnlTimer;
         private System.Windows.Forms.PictureBox picTimerO;
         private System.Windows.Forms.PictureBox picTimerT;

@@ -16,8 +16,11 @@ namespace Minesweeper_Classic
 
         private int timerCount = 0;
         private int bombCount = 10;
+        private int flagCount;
         private int rows = 9;
         private int cols = 9;
+        private int unclickedRemaining;
+        private bool gameRunning = true;
 
         private PictureBox[,] gameboardPics;
         private Tiles[,] gameboard;
@@ -82,7 +85,7 @@ namespace Minesweeper_Classic
         private void Form1_Load(object sender, EventArgs e)
         {
             picFace.Image = imgFaces.Images[(int)Faces.Smile];
-            drawBombCount();
+            drawFlagCount();
             drawTimer();
             newGame();
         }
@@ -141,11 +144,15 @@ namespace Minesweeper_Classic
         // Pair of functions to be used with any control that can flip the face if clicked
         private void Control_MouseDown(object sender, MouseEventArgs e)
         {
+            if (!gameRunning)
+                return;
             picFace.Image = imgFaces.Images[(int)Faces.Oh];
         }
 
         private void Control_MouseUp(object sender, MouseEventArgs e)
         {
+            if (!gameRunning)
+                return;
             picFace.Image = imgFaces.Images[(int)Faces.Smile];
         }
 
@@ -182,19 +189,19 @@ namespace Minesweeper_Classic
             picTimerO.Image = imList.Images[ones];
         }
 
-        private void drawBombCount()
+        private void drawFlagCount()
         {
-            int hundreds = (bombCount % 1000 - bombCount % 100) / 100;
-            int tens = (bombCount % 100 - bombCount % 10) / 10;
-            int ones = bombCount % 10;
+            int hundreds = (flagCount % 1000 - flagCount % 100) / 100;
+            int tens = (flagCount % 100 - flagCount % 10) / 10;
+            int ones = flagCount % 10;
             ImageList imList;
             if (color)
                 imList = imgSevenSegment;
             else
                 imList = imgSevenSegment_BW;
-            picBombCountH.Image = imList.Images[hundreds];
-            picBombCountT.Image = imList.Images[tens];
-            picBombCountO.Image = imList.Images[ones];
+            picFlagCountH.Image = imList.Images[hundreds];
+            picFlagCountT.Image = imList.Images[tens];
+            picFlagCountO.Image = imList.Images[ones];
         }
 
         private int getMineCount(int r, int c)
@@ -223,7 +230,10 @@ namespace Minesweeper_Classic
         {
             // Init the variables
             timerCount = 0;
-            drawBombCount();
+            gameRunning = true;
+            unclickedRemaining = rows * cols;
+            flagCount = bombCount;
+            drawFlagCount();
             drawTimer();
 
             // Init gameboard to keep track of game state
@@ -256,6 +266,7 @@ namespace Minesweeper_Classic
                     gameboardPics[r, c].Click += gameboardClicked;
                     gameboardPics[r, c].MouseDown += Control_MouseDown;
                     gameboardPics[r, c].MouseUp += Control_MouseUp;
+                    gameboardPics[r, c].Tag = "U";
                 }
             }
             
@@ -274,8 +285,12 @@ namespace Minesweeper_Classic
             }
         }
 
+        // Called by tiles when clicked
         private void gameboardClicked(object sender, EventArgs e)
         {
+            if (!gameRunning)
+                return;
+
             PictureBox clicked = (PictureBox)sender;
             string location = clicked.Name.Substring(13);  // length of "picGameboard_"
             int row = int.Parse(location.Substring(0, location.IndexOf(',')));
@@ -287,6 +302,10 @@ namespace Minesweeper_Classic
                 if (!timCountUp.Enabled)  // Enable timer after first click
                     timCountUp.Start();
 
+                if (clicked.Tag.Equals("F"))  // Don't click flags
+                    return;
+
+                // Switch based on the state of the clicked tile
                 switch (gameboard[row, col])
                 {
                     case Tiles.Unclicked:
@@ -299,6 +318,7 @@ namespace Minesweeper_Classic
                         }
                         break;
                     case Tiles.HiddenBomb:
+                        gameOver();
                         clicked.Image = imgTiles.Images[(int)Tiles.BombClicked];
                         break;
                     case Tiles.Blank:
@@ -321,15 +341,19 @@ namespace Minesweeper_Classic
                 switch (clicked.Tag)
                 {
                     case null:
-                    case "U":
+                    case "U":  // Unclicked, make it a flag
                         clicked.Image = imgTiles.Images[(int)Tiles.Flag];
                         clicked.Tag = "F";
+                        flagCount--;
+                        drawFlagCount();
                         break;
-                    case "F":
+                    case "F":  // Flag, make it a question
                         clicked.Image = imgTiles.Images[(int)Tiles.QuestionUnclicked];
                         clicked.Tag = "Q";
+                        flagCount++;
+                        drawFlagCount();
                         break;
-                    case "Q":
+                    case "Q":  // Question, make it unclicked
                         clicked.Image = imgTiles.Images[(int)Tiles.Unclicked];
                         clicked.Tag = "U";
                         break;
@@ -345,17 +369,54 @@ namespace Minesweeper_Classic
         {
             MouseEventArgs fakeArgs = new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0);
 
-            if (r != rows - 1)
+            if (r != rows - 1)  // South
                 gameboardClicked(gameboardPics[r + 1, c], fakeArgs);
-            if (r != 0)
+            if (r != 0)  // North
                 gameboardClicked(gameboardPics[r - 1, c], fakeArgs);
-            if (c != cols - 1)
+            if (c != cols - 1)  // East
                 gameboardClicked(gameboardPics[r, c + 1], fakeArgs);
-            if (c != 0)
+            if (c != 0)  // West
                 gameboardClicked(gameboardPics[r, c - 1], fakeArgs);
+            if (r != rows - 1 && c != cols - 1)  // Southeast
+                gameboardClicked(gameboardPics[r + 1, c + 1], fakeArgs);
+            if (r != rows - 1 && c != 0)  // Southwest
+                gameboardClicked(gameboardPics[r + 1, c - 1], fakeArgs);
+            if (r != 0 && c != cols - 1)  // Northeast
+                gameboardClicked(gameboardPics[r - 1, c + 1], fakeArgs);
+            if (r != 0 && c != 0)  // Northwest
+                gameboardClicked(gameboardPics[r - 1, c - 1], fakeArgs);
         }
 
+        private void gameOver()
+        {
+            // Reveal un-flagged bombs
+            PictureBox pb;
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    // If a bomb is hidden, but not flagged, reveal it
+                    pb = gameboardPics[r, c];
+                    if (gameboard[r, c] == Tiles.HiddenBomb && !pb.Tag.Equals("F"))
+                    {
+                        pb.Image = imgTiles.Images[(int)Tiles.Bomb];
+                    }
+                }
+            }
 
+            gameRunning = false;
+            timCountUp.Stop();
+            picFace.Image = imgFaces.Images[(int)Faces.Dead];
+        }
+
+        public void win()
+        {
+            gameRunning = false;
+            timCountUp.Stop();
+            picFace.Image = imgFaces.Images[(int)Faces.Sunglasses];
+            // TODO win sound
+            // TODO high score storage
+        }
 
 
 
@@ -363,6 +424,7 @@ namespace Minesweeper_Classic
         private void test1ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Test1");
+            win();
         }
 
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
