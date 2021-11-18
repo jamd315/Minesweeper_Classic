@@ -207,21 +207,21 @@ namespace Minesweeper_Classic
         private int getMineCount(int r, int c)
         {
             int count = 0;
-            if (r != 0 && c != 0 && gameboard[r - 1, c - 1] == Tiles.HiddenBomb)
+            if (r != 0 && c != 0 && gameboard[r - 1, c - 1] == Tiles.HiddenBomb)  // Northwest
                 count++;
-            if (r != 0 && gameboard[r - 1, c] == Tiles.HiddenBomb)
+            if (r != 0 && gameboard[r - 1, c] == Tiles.HiddenBomb)  // North
                 count++;
-            if (r != 0 && c != cols - 1 && gameboard[r - 1, c + 1] == Tiles.HiddenBomb)
+            if (r != 0 && c != cols - 1 && gameboard[r - 1, c + 1] == Tiles.HiddenBomb)  // Northeast
                 count++;
-            if (c != 0 && gameboard[r, c - 1] == Tiles.HiddenBomb)
+            if (c != 0 && gameboard[r, c - 1] == Tiles.HiddenBomb)  // West
                 count++;
-            if (c != cols - 1 && gameboard[r, c + 1] == Tiles.HiddenBomb)
+            if (c != cols - 1 && gameboard[r, c + 1] == Tiles.HiddenBomb)  // East
                 count++;
-            if (r != rows - 1  && c != 0 && gameboard[r + 1, c - 1] == Tiles.HiddenBomb)
+            if (r != rows - 1  && c != 0 && gameboard[r + 1, c - 1] == Tiles.HiddenBomb)  // Southwest
                 count++;
-            if (r != rows - 1 && gameboard[r + 1, c] == Tiles.HiddenBomb)
+            if (r != rows - 1 && gameboard[r + 1, c] == Tiles.HiddenBomb)  // South
                 count++;
-            if (r != rows - 1 && c != cols - 1 && gameboard[r + 1, c + 1] == Tiles.HiddenBomb)
+            if (r != rows - 1 && c != cols - 1 && gameboard[r + 1, c + 1] == Tiles.HiddenBomb)  // Southeast
                 count++;
             return count;
         }
@@ -238,6 +238,7 @@ namespace Minesweeper_Classic
 
             // Init gameboard to keep track of game state
             // Also set up pictureboxes
+            pnlGameboard.SuspendLayout();
             gameboard = new Tiles[rows, cols];
             if (gameboardPics != null)  // Clear before creating new one, use old array dims instead of this.rows, this.cols in case those changed
             {
@@ -269,6 +270,7 @@ namespace Minesweeper_Classic
                     gameboardPics[r, c].Tag = "U";
                 }
             }
+            pnlGameboard.ResumeLayout();
             
             // Add bombs
             int bombsAdded = 0;
