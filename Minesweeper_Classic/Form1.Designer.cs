@@ -69,6 +69,7 @@
             this.imgTiles = new System.Windows.Forms.ImageList(this.components);
             this.imgTiles_BW = new System.Windows.Forms.ImageList(this.components);
             this.pnlGameboard = new System.Windows.Forms.Panel();
+            this.picGameboard = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlTimer.SuspendLayout();
@@ -80,6 +81,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picFlagCountT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFlagCountH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFace)).BeginInit();
+            this.pnlGameboard.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picGameboard)).BeginInit();
             this.SuspendLayout();
             // 
             // timCountUp
@@ -479,6 +482,7 @@
             // pnlGameboard
             // 
             this.pnlGameboard.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pnlGameboard.Controls.Add(this.picGameboard);
             this.pnlGameboard.Location = new System.Drawing.Point(7, 71);
             this.pnlGameboard.Margin = new System.Windows.Forms.Padding(0);
             this.pnlGameboard.Name = "pnlGameboard";
@@ -486,6 +490,17 @@
             this.pnlGameboard.TabIndex = 2;
             this.pnlGameboard.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
             this.pnlGameboard.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
+            // 
+            // picGameboard
+            // 
+            this.picGameboard.Location = new System.Drawing.Point(0, 0);
+            this.picGameboard.Name = "picGameboard";
+            this.picGameboard.Size = new System.Drawing.Size(144, 144);
+            this.picGameboard.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.picGameboard.TabIndex = 0;
+            this.picGameboard.TabStop = false;
+            this.picGameboard.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
+            this.picGameboard.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
             // Form1
             // 
@@ -520,6 +535,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picFlagCountT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFlagCountH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFace)).EndInit();
+            this.pnlGameboard.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picGameboard)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -565,6 +582,7 @@
         private System.Windows.Forms.PictureBox picTimerH;
         private System.Windows.Forms.ToolStripMenuItem test1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem test2ToolStripMenuItem;
+        private System.Windows.Forms.PictureBox picGameboard;
     }
 }
 

@@ -22,8 +22,9 @@ namespace Minesweeper_Classic
         private int unclickedRemaining;
         private bool gameRunning = true;
 
-        private PictureBox[,] gameboardPics;
         private Tiles[,] gameboard;
+        private TileState[,] tileState;
+        private Bitmap gameboardBmp;
 
         private enum Faces: int  // Used with imgFaces, imgFaces_BW
         {
@@ -51,8 +52,14 @@ namespace Minesweeper_Classic
             NoBomb = 12,
             Question = 13,
             QuestionUnclicked = 14,
-            Unclicked = 15,
-            HiddenBomb = 16
+            Unclicked = 15
+        }
+
+        private enum TileState
+        {
+            Nothing,
+            IsBomb,
+            Revealed
         }
 
         private enum SevenSegment: int  // Used with imgSevenSegment, imgSevenSegment_BW
@@ -82,6 +89,7 @@ namespace Minesweeper_Classic
             timerCount++;
             drawTimer();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             picFace.Image = imgFaces.Images[(int)Faces.Smile];
@@ -154,6 +162,11 @@ namespace Minesweeper_Classic
             if (!gameRunning)
                 return;
             picFace.Image = imgFaces.Images[(int)Faces.Smile];
+
+            if (sender == picGameboard)
+            {
+                gameboardClicked(sender, e);
+            }
         }
 
         // Do a separate pair of functions for if the button is actually pressed
@@ -174,6 +187,7 @@ namespace Minesweeper_Classic
         }
         #endregion FaceManagement
 
+        #region Drawing
         private void drawTimer()
         {
             int hundreds = (timerCount % 1000 - timerCount % 100) / 100;
@@ -204,24 +218,63 @@ namespace Minesweeper_Classic
             picFlagCountO.Image = imList.Images[ones];
         }
 
+        // Render gameboard to a single image to improve performance
+        private void drawGameboard()
+        {
+            gameboardBmp = new Bitmap(cols * 16, rows * 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Graphics graphic = Graphics.FromImage(gameboardBmp);
+            // Just copy the source pixels as quickly as possible
+            graphic.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            // Not really sure what I want, just a direct copy so I went with AssumeLinear.  Could also use GammaCorrected or HighSpeed
+            // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.drawing2d.compositingquality?view=netframework-4.7.1
+            graphic.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.AssumeLinear;
+
+            Point pt = new Point();
+            for (int r = 0; r < rows * 16; r += 16)
+            {
+                for (int c = 0; c < cols * 16; c += 16)
+                {
+                    pt.X = c;
+                    pt.Y = r;
+                    imgTiles.Draw(graphic, pt, (int)Tiles.Unclicked);
+                }
+            }
+
+            picGameboard.Image = gameboardBmp;
+        }
+
+        private void changeGameboard(int r, int c, ImageList il, int index)
+        {
+            Graphics graphic = Graphics.FromImage(gameboardBmp);
+            // TODO should I save the graphics thing?  This is copied from drawGameboard
+            graphic.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            graphic.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.AssumeLinear;
+
+            Point pt = new Point(16 * c, 16 * r);
+            il.Draw(graphic, pt, index);
+            picGameboard.Image = gameboardBmp;
+        }
+        #endregion Drawing
+
+        #region GameManagement
         private int getMineCount(int r, int c)
         {
             int count = 0;
-            if (r != 0 && c != 0 && gameboard[r - 1, c - 1] == Tiles.HiddenBomb)  // Northwest
+            if (r != 0 && c != 0 && tileState[r - 1, c - 1] == TileState.IsBomb)  // Northwest
                 count++;
-            if (r != 0 && gameboard[r - 1, c] == Tiles.HiddenBomb)  // North
+            if (r != 0 && tileState[r - 1, c] == TileState.IsBomb)  // North
                 count++;
-            if (r != 0 && c != cols - 1 && gameboard[r - 1, c + 1] == Tiles.HiddenBomb)  // Northeast
+            if (r != 0 && c != cols - 1 && tileState[r - 1, c + 1] == TileState.IsBomb)  // Northeast
                 count++;
-            if (c != 0 && gameboard[r, c - 1] == Tiles.HiddenBomb)  // West
+            if (c != 0 && tileState[r, c - 1] == TileState.IsBomb)  // West
                 count++;
-            if (c != cols - 1 && gameboard[r, c + 1] == Tiles.HiddenBomb)  // East
+            if (c != cols - 1 && tileState[r, c + 1] == TileState.IsBomb)  // East
                 count++;
-            if (r != rows - 1  && c != 0 && gameboard[r + 1, c - 1] == Tiles.HiddenBomb)  // Southwest
+            if (r != rows - 1  && c != 0 && tileState[r + 1, c - 1] == TileState.IsBomb)  // Southwest
                 count++;
-            if (r != rows - 1 && gameboard[r + 1, c] == Tiles.HiddenBomb)  // South
+            if (r != rows - 1 && tileState[r + 1, c] == TileState.IsBomb)  // South
                 count++;
-            if (r != rows - 1 && c != cols - 1 && gameboard[r + 1, c + 1] == Tiles.HiddenBomb)  // Southeast
+            if (r != rows - 1 && c != cols - 1 && tileState[r + 1, c + 1] == TileState.IsBomb)  // Southeast
                 count++;
             return count;
         }
@@ -237,40 +290,17 @@ namespace Minesweeper_Classic
             drawTimer();
 
             // Init gameboard to keep track of game state
-            // Also set up pictureboxes
-            pnlGameboard.SuspendLayout();
+            drawGameboard();
             gameboard = new Tiles[rows, cols];
-            if (gameboardPics != null)  // Clear before creating new one, use old array dims instead of this.rows, this.cols in case those changed
-            {
-                for (int r = 0; r < gameboardPics.GetLength(0); r++)
-                {
-                    for (int c = 0; c < gameboardPics.GetLength(1); c++)
-                    {
-                        pnlGameboard.Controls.Remove(gameboardPics[r, c]);
-                        gameboardPics[r, c].Dispose();
-                    }
-                }
-            }
-            gameboardPics = new PictureBox[rows, cols];
+            tileState = new TileState[rows, cols];
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
                 {
                     gameboard[r, c] = Tiles.Unclicked;
-
-                    gameboardPics[r, c] = new PictureBox();
-                    pnlGameboard.Controls.Add(gameboardPics[r, c]);
-                    gameboardPics[r, c].Image = imgTiles.Images[(int)Tiles.Unclicked];
-                    gameboardPics[r, c].SizeMode = PictureBoxSizeMode.AutoSize;
-                    gameboardPics[r, c].Location = new Point(16 * c, 16 * r);
-                    gameboardPics[r, c].Name = $"picGameboard_{r},{c}";  // Gets parsed later
-                    gameboardPics[r, c].Click += gameboardClicked;
-                    gameboardPics[r, c].MouseDown += Control_MouseDown;
-                    gameboardPics[r, c].MouseUp += Control_MouseUp;
-                    gameboardPics[r, c].Tag = "U";
+                    tileState[r, c] = TileState.Nothing;
                 }
             }
-            pnlGameboard.ResumeLayout();
             
             // Add bombs
             int bombsAdded = 0;
@@ -281,7 +311,7 @@ namespace Minesweeper_Classic
                 int bombCol = rand.Next(cols);
                 if (gameboard[bombRow, bombCol] == Tiles.Unclicked)
                 {
-                    gameboard[bombRow, bombCol] = Tiles.HiddenBomb;
+                    tileState[bombRow, bombCol] = TileState.IsBomb;
                 }
                 bombsAdded++;
             }
@@ -293,115 +323,119 @@ namespace Minesweeper_Classic
             if (!gameRunning)
                 return;
 
-            PictureBox clicked = (PictureBox)sender;
-            string location = clicked.Name.Substring(13);  // length of "picGameboard_"
-            int row = int.Parse(location.Substring(0, location.IndexOf(',')));
-            int col = int.Parse(location.Substring(location.IndexOf(',') + 1));
-
             MouseEventArgs me = (MouseEventArgs)e;
+
+            int row = me.Y / 16;
+            int col = me.X / 16;
+
             if (me.Button == MouseButtons.Left)
             {
                 if (!timCountUp.Enabled)  // Enable timer after first click
                     timCountUp.Start();
 
-                if (clicked.Tag.Equals("F"))  // Don't click flags
+                if (gameboard[row, col] == Tiles.Flag)  // Don't click flags
                     return;
 
                 // Switch based on the state of the clicked tile
-                switch (gameboard[row, col])
+                if (gameboard[row, col] == Tiles.Unclicked)
                 {
-                    case Tiles.Unclicked:
-                        int nearbyBombs = getMineCount(row, col);
-                        clicked.Image = imgTiles.Images[nearbyBombs];
-                        gameboard[row, col] = (Tiles)nearbyBombs;
-                        if (nearbyBombs == 0)
-                        {
-                            clickAllAdjacent(row, col);
-                        }
-                        break;
-                    case Tiles.HiddenBomb:
-                        gameOver();
-                        clicked.Image = imgTiles.Images[(int)Tiles.BombClicked];
-                        break;
-                    case Tiles.Blank:
-                    case Tiles.Tile1:
-                    case Tiles.Tile2:
-                    case Tiles.Tile3:
-                    case Tiles.Tile4:
-                    case Tiles.Tile5:
-                    case Tiles.Tile6:
-                    case Tiles.Tile7:
-                    case Tiles.Tile8:
-                    case Tiles.Flag:
-                        // Do nothing
-                        break;
+                    int nearbyBombs = getMineCount(row, col);
+                    changeGameboard(row, col, imgTiles, nearbyBombs);
+                    gameboard[row, col] = (Tiles)nearbyBombs;
+                    if (nearbyBombs == 0)
+                    {
+                        clickAllAdjacent(row, col, me);
+                    }
+                }
+                if (tileState[row, col] == TileState.IsBomb)
+                {
+                    gameOver();
+                    changeGameboard(row, col, imgTiles, (int)Tiles.BombClicked);
                 }
             }
             else if (me.Button == MouseButtons.Right)
             {
-                // TODO this doesn't work, maybe try something with tags to keep track of image state?
-                switch (clicked.Tag)
+
+                switch (gameboard[row, col])
                 {
-                    case null:
-                    case "U":  // Unclicked, make it a flag
-                        clicked.Image = imgTiles.Images[(int)Tiles.Flag];
-                        clicked.Tag = "F";
+                    case Tiles.Unclicked:  // Unclicked, make it a flag
+                        changeGameboard(row, col, imgTiles, (int)Tiles.Flag);
+                        gameboard[row, col] = Tiles.Flag;
                         flagCount--;
                         drawFlagCount();
                         break;
-                    case "F":  // Flag, make it a question
-                        clicked.Image = imgTiles.Images[(int)Tiles.QuestionUnclicked];
-                        clicked.Tag = "Q";
+                    case Tiles.Flag:  // Flag, make it a question
+                        changeGameboard(row, col, imgTiles, (int)Tiles.QuestionUnclicked);
+                        gameboard[row, col] = Tiles.QuestionUnclicked;
                         flagCount++;
                         drawFlagCount();
                         break;
-                    case "Q":  // Question, make it unclicked
-                        clicked.Image = imgTiles.Images[(int)Tiles.Unclicked];
-                        clicked.Tag = "U";
-                        break;
-                    default:
-                        clicked.Image = imgTiles.Images[(int)Tiles.NoBomb];
+                    case Tiles.Question:
+                    case Tiles.QuestionUnclicked:  // Question, make it unclicked
+                        changeGameboard(row, col, imgTiles, (int)Tiles.Unclicked);
+                        gameboard[row, col] = Tiles.Unclicked;
                         break;
                 }
             }
         }
 
         // Used when a 0 adjacency tile is clicked to flood fill
-        private void clickAllAdjacent(int r, int c)
+        private void clickAllAdjacent(int r, int c, MouseEventArgs initialArgs)
         {
-            MouseEventArgs fakeArgs = new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0);
-
+            MouseEventArgs me;
             if (r != rows - 1)  // South
-                gameboardClicked(gameboardPics[r + 1, c], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y + 16, 0);
+                
+            }
             if (r != 0)  // North
-                gameboardClicked(gameboardPics[r - 1, c], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y - 16, 0);
+                gameboardClicked(null, me);
+            }
             if (c != cols - 1)  // East
-                gameboardClicked(gameboardPics[r, c + 1], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y, 0);
+                gameboardClicked(null, me);
+            }
             if (c != 0)  // West
-                gameboardClicked(gameboardPics[r, c - 1], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y, 0);
+                gameboardClicked(null, me);
+            }
             if (r != rows - 1 && c != cols - 1)  // Southeast
-                gameboardClicked(gameboardPics[r + 1, c + 1], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y + 16, 0);
+                gameboardClicked(null, me);
+            }
             if (r != rows - 1 && c != 0)  // Southwest
-                gameboardClicked(gameboardPics[r + 1, c - 1], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y + 16, 0);
+                gameboardClicked(null, me);
+            }
             if (r != 0 && c != cols - 1)  // Northeast
-                gameboardClicked(gameboardPics[r - 1, c + 1], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y - 16, 0);
+                gameboardClicked(null, me);
+            }
             if (r != 0 && c != 0)  // Northwest
-                gameboardClicked(gameboardPics[r - 1, c - 1], fakeArgs);
+            {
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y - 16, 0);
+                gameboardClicked(null, me);
+            }
         }
 
         private void gameOver()
         {
             // Reveal un-flagged bombs
-            PictureBox pb;
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
                 {
                     // If a bomb is hidden, but not flagged, reveal it
-                    pb = gameboardPics[r, c];
-                    if (gameboard[r, c] == Tiles.HiddenBomb && !pb.Tag.Equals("F"))
+                    if (tileState[r, c] == TileState.IsBomb && gameboard[r, c] != Tiles.Flag)
                     {
-                        pb.Image = imgTiles.Images[(int)Tiles.Bomb];
+                        changeGameboard(rows, cols, imgTiles, (int)Tiles.Bomb);
                     }
                 }
             }
@@ -419,10 +453,9 @@ namespace Minesweeper_Classic
             // TODO win sound
             // TODO high score storage
         }
+        #endregion GameManagement
 
-
-
-
+        #region Debug
         private void test1ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Test1");
@@ -432,6 +465,8 @@ namespace Minesweeper_Classic
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Test2");
+            drawGameboard();
         }
+        #endregion Debug
     }
 }
