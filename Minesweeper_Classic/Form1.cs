@@ -96,49 +96,66 @@ namespace Minesweeper_Classic
         }
 
         #region Toolstrip
+        // Beginner difficulty
         private void beginnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             beginnerToolStripMenuItem.Checked = true;
             intermediateToolStripMenuItem.Checked = false;
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = false;
+            rows = 9;
+            cols = 9;
+            bombCount = 10;
         }
 
+        // Intermediate difficulty
         private void intermediateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             beginnerToolStripMenuItem.Checked = false;
             intermediateToolStripMenuItem.Checked = true;
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = false;
+            rows = 16;
+            cols = 16;
+            bombCount = 40;
         }
 
+        // Expert difficulty
         private void expertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             beginnerToolStripMenuItem.Checked = false;
             intermediateToolStripMenuItem.Checked = false;
             expertToolStripMenuItem.Checked = true;
             customToolStripMenuItem.Checked = false;
+            rows = 16;
+            cols = 30;
+            bombCount = 99;
         }
 
+        // Custom difficulty
         private void customToolStripMenuItem_Click(object sender, EventArgs e)
         {
             beginnerToolStripMenuItem.Checked = false;
             intermediateToolStripMenuItem.Checked = false;
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = true;
+            // TODO custom difficulty form
         }
 
+        // Just exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        // Show the high scores
         private void bestTimesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HighscoreScreen hs = new HighscoreScreen();
             hs.ShowDialog();
         }
 
+        // Start a new game
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             newGame();
@@ -160,6 +177,8 @@ namespace Minesweeper_Classic
                 return;
             drawFace(Faces.Smile);
 
+
+            // If picGameboard is clicked use an additional handler
             if (sender == picGameboard)
             {
                 gameboardClicked(sender, e);
@@ -185,6 +204,7 @@ namespace Minesweeper_Classic
         #endregion FaceManagement
 
         #region Drawing
+        // Redraw timer, disposing of old images
         private void drawTimer()
         {
             int hundreds = (timerCount % 1000 - timerCount % 100) / 100;
@@ -206,6 +226,7 @@ namespace Minesweeper_Classic
             picTimerO.Image = imList.Images[ones];
         }
 
+        // Redraw flag count, disposing of old images
         private void drawFlagCount()
         {
             int hundreds = (flagCount % 1000 - flagCount % 100) / 100;
@@ -227,6 +248,7 @@ namespace Minesweeper_Classic
             picFlagCountO.Image = imList.Images[ones];
         }
 
+        // Redraw face and dispose the old image
         private void drawFace(Faces f)
         {
             if (picFace.Image != null)
@@ -263,6 +285,7 @@ namespace Minesweeper_Classic
             picGameboard.Image = gameboardBmp;
         }
 
+        // Just change part of the gameboardBmp
         private void changeGameboard(int r, int c, ImageList il, int index)
         {
             Point pt = new Point(16 * c, 16 * r);
@@ -272,7 +295,8 @@ namespace Minesweeper_Classic
         #endregion Drawing
 
         #region GameManagement
-        private int getMineCount(int r, int c)
+        // Gets the number of adjacent mines for a given tile
+        private int adjacentMineCount(int r, int c)
         {
             int count = 0;
             if (r != 0 && c != 0 && tileState[r - 1, c - 1] == TileState.IsBomb)  // Northwest
@@ -294,6 +318,7 @@ namespace Minesweeper_Classic
             return count;
         }
 
+        // Reset game state variables and start a new game
         private void newGame()
         {
             // Init the variables
@@ -366,7 +391,7 @@ namespace Minesweeper_Classic
                 // Switch based on the state of the clicked tile
                 if (gameboard[row, col] == Tiles.Unclicked)
                 {
-                    int nearbyBombs = getMineCount(row, col);
+                    int nearbyBombs = adjacentMineCount(row, col);
                     changeGameboard(row, col, imgTiles, nearbyBombs);
                     gameboard[row, col] = (Tiles)nearbyBombs;
                     if (nearbyBombs == 0)
@@ -457,8 +482,13 @@ namespace Minesweeper_Classic
             }
         }
 
+        // Stop the game after a loss condition
         private void gameOver()
         {
+            gameRunning = false;
+            timCountUp.Stop();
+            drawFace(Faces.Dead);
+
             // Reveal un-flagged bombs
             for (int r = 0; r < rows; r++)
             {
@@ -467,16 +497,15 @@ namespace Minesweeper_Classic
                     // If a bomb is hidden, but not flagged, reveal it
                     if (tileState[r, c] == TileState.IsBomb && gameboard[r, c] != Tiles.Flag)
                     {
+                        gameboard[r, c] = Tiles.Bomb;
                         changeGameboard(rows, cols, imgTiles, (int)Tiles.Bomb);
                     }
                 }
             }
 
-            gameRunning = false;
-            timCountUp.Stop();
-            drawFace(Faces.Dead);
         }
 
+        // Stop the game after a win condition
         public void win()
         {
             gameRunning = false;
