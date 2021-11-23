@@ -25,6 +25,7 @@ namespace Minesweeper_Classic
         private Tiles[,] gameboard;
         private TileState[,] tileState;
         private Bitmap gameboardBmp;
+        private Graphics gameboardGraphic;
 
         private enum Faces: int  // Used with imgFaces, imgFaces_BW
         {
@@ -198,8 +199,14 @@ namespace Minesweeper_Classic
                 imList = imgSevenSegment;
             else
                 imList = imgSevenSegment_BW;
+            if (picTimerH.Image != null)
+                picTimerH.Image.Dispose();
             picTimerH.Image = imList.Images[hundreds];
+            if (picTimerT.Image != null)
+                picTimerT.Image.Dispose();
             picTimerT.Image = imList.Images[tens];
+            if (picTimerO.Image != null)
+                picTimerO.Image.Dispose();
             picTimerO.Image = imList.Images[ones];
         }
 
@@ -213,21 +220,31 @@ namespace Minesweeper_Classic
                 imList = imgSevenSegment;
             else
                 imList = imgSevenSegment_BW;
+            if (picFlagCountH.Image != null)
+                picFlagCountH.Image.Dispose();
             picFlagCountH.Image = imList.Images[hundreds];
+            if (picFlagCountT.Image != null)
+                picFlagCountT.Image.Dispose();
             picFlagCountT.Image = imList.Images[tens];
+            if (picFlagCountO.Image != null)
+                picFlagCountO.Image.Dispose();
             picFlagCountO.Image = imList.Images[ones];
         }
 
         // Render gameboard to a single image to improve performance
         private void drawGameboard()
         {
+            if (gameboardBmp != null)
+                gameboardBmp.Dispose();
             gameboardBmp = new Bitmap(cols * 16, rows * 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Graphics graphic = Graphics.FromImage(gameboardBmp);
+            if (gameboardGraphic != null)
+                gameboardGraphic.Dispose();
+            gameboardGraphic = Graphics.FromImage(gameboardBmp);
             // Just copy the source pixels as quickly as possible
-            graphic.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            gameboardGraphic.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             // Not really sure what I want, just a direct copy so I went with AssumeLinear.  Could also use GammaCorrected or HighSpeed
             // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.drawing2d.compositingquality?view=netframework-4.7.1
-            graphic.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.AssumeLinear;
+            gameboardGraphic.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.AssumeLinear;
 
             Point pt = new Point();
             for (int r = 0; r < rows * 16; r += 16)
@@ -236,7 +253,7 @@ namespace Minesweeper_Classic
                 {
                     pt.X = c;
                     pt.Y = r;
-                    imgTiles.Draw(graphic, pt, (int)Tiles.Unclicked);
+                    imgTiles.Draw(gameboardGraphic, pt, (int)Tiles.Unclicked);
                 }
             }
 
@@ -245,13 +262,8 @@ namespace Minesweeper_Classic
 
         private void changeGameboard(int r, int c, ImageList il, int index)
         {
-            Graphics graphic = Graphics.FromImage(gameboardBmp);
-            // TODO should I save the graphics thing?  This is copied from drawGameboard
-            graphic.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-            graphic.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.AssumeLinear;
-
             Point pt = new Point(16 * c, 16 * r);
-            il.Draw(graphic, pt, index);
+            il.Draw(gameboardGraphic, pt, index);
             picGameboard.Image = gameboardBmp;
         }
         #endregion Drawing
@@ -309,7 +321,7 @@ namespace Minesweeper_Classic
             {
                 int bombRow = rand.Next(rows);
                 int bombCol = rand.Next(cols);
-                if (gameboard[bombRow, bombCol] == Tiles.Unclicked)
+                if (tileState[bombRow, bombCol] != TileState.IsBomb)
                 {
                     tileState[bombRow, bombCol] = TileState.IsBomb;
                 }
@@ -325,8 +337,20 @@ namespace Minesweeper_Classic
 
             MouseEventArgs me = (MouseEventArgs)e;
 
+            if (me.X < 0 || me.Y < 0)
+                MessageBox.Show("This does happen BTW");
             int row = me.Y / 16;
             int col = me.X / 16;
+            if (row >= rows)
+                throw new IndexOutOfRangeException("Row overflow");
+            if (row < 0)
+                throw new IndexOutOfRangeException("Row underflow");
+            if (col >= cols)
+                throw new IndexOutOfRangeException("Column overflow");
+            if (col < 0)
+                throw new IndexOutOfRangeException("Column underflow");
+
+            //MessageBox.Show($"Clicked (x={me.X}, y={me.Y}) row {row}, col {col}");
 
             if (me.Button == MouseButtons.Left)
             {
@@ -386,7 +410,7 @@ namespace Minesweeper_Classic
             if (r != rows - 1)  // South
             {
                 me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y + 16, 0);
-                
+                gameboardClicked(null, me);
             }
             if (r != 0)  // North
             {
@@ -395,32 +419,32 @@ namespace Minesweeper_Classic
             }
             if (c != cols - 1)  // East
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y, 0);
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y, 0);
                 gameboardClicked(null, me);
             }
             if (c != 0)  // West
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y, 0);
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y, 0);
                 gameboardClicked(null, me);
             }
             if (r != rows - 1 && c != cols - 1)  // Southeast
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y + 16, 0);
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y + 16, 0);
                 gameboardClicked(null, me);
             }
             if (r != rows - 1 && c != 0)  // Southwest
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y + 16, 0);
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y + 16, 0);
                 gameboardClicked(null, me);
             }
             if (r != 0 && c != cols - 1)  // Northeast
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y - 16, 0);
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y - 16, 0);
                 gameboardClicked(null, me);
             }
             if (r != 0 && c != 0)  // Northwest
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y - 16, 0);
+                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y - 16, 0);
                 gameboardClicked(null, me);
             }
         }
