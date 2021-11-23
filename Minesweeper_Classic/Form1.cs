@@ -22,10 +22,10 @@ namespace Minesweeper_Classic
         private int unclickedRemaining;
         private bool gameRunning = true;
 
-        private Tiles[,] gameboard;
-        private TileState[,] tileState;
-        private Bitmap gameboardBmp;
-        private Graphics gameboardGraphic;
+        private Tiles[,] gameboard;         // Array of displayed tiles
+        private TileState[,] tileState;     // Whether the tile is a bomb or not
+        private Bitmap gameboardBmp;        // The gameboard image displayed in picGameboard
+        private Graphics gameboardGraphic;  // Edits gameboardBmp
 
         private enum Faces: int  // Used with imgFaces, imgFaces_BW
         {
@@ -56,11 +56,10 @@ namespace Minesweeper_Classic
             Unclicked = 15
         }
 
-        private enum TileState
+        private enum TileState  // Is it a bomb or not
         {
             Nothing,
-            IsBomb,
-            Revealed
+            IsBomb
         }
 
         private enum SevenSegment: int  // Used with imgSevenSegment, imgSevenSegment_BW
@@ -93,9 +92,6 @@ namespace Minesweeper_Classic
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            picFace.Image = imgFaces.Images[(int)Faces.Smile];
-            drawFlagCount();
-            drawTimer();
             newGame();
         }
 
@@ -155,14 +151,14 @@ namespace Minesweeper_Classic
         {
             if (!gameRunning)
                 return;
-            picFace.Image = imgFaces.Images[(int)Faces.Oh];
+            drawFace(Faces.Oh);
         }
 
         private void Control_MouseUp(object sender, MouseEventArgs e)
         {
             if (!gameRunning)
                 return;
-            picFace.Image = imgFaces.Images[(int)Faces.Smile];
+            drawFace(Faces.Smile);
 
             if (sender == picGameboard)
             {
@@ -173,12 +169,12 @@ namespace Minesweeper_Classic
         // Do a separate pair of functions for if the button is actually pressed
         private void picFace_MouseDown(object sender, MouseEventArgs e)
         {
-            picFace.Image = imgFaces.Images[(int)Faces.SmilePressed];
+            drawFace(Faces.SmilePressed);
         }
 
         private void picFace_MouseUp(object sender, MouseEventArgs e)
         {
-            picFace.Image = imgFaces.Images[(int)Faces.Smile];
+            drawFace(Faces.Smile);
         }
 
         // Full click to do new game
@@ -229,6 +225,13 @@ namespace Minesweeper_Classic
             if (picFlagCountO.Image != null)
                 picFlagCountO.Image.Dispose();
             picFlagCountO.Image = imList.Images[ones];
+        }
+
+        private void drawFace(Faces f)
+        {
+            if (picFace.Image != null)
+                picFace.Image.Dispose();
+            picFace.Image = imgFaces.Images[(int)f];
         }
 
         // Render gameboard to a single image to improve performance
@@ -294,12 +297,14 @@ namespace Minesweeper_Classic
         private void newGame()
         {
             // Init the variables
+            timCountUp.Stop();
             timerCount = 0;
             gameRunning = true;
             unclickedRemaining = rows * cols;
             flagCount = bombCount;
             drawFlagCount();
             drawTimer();
+            drawFace(Faces.Smile);
 
             // Init gameboard to keep track of game state
             drawGameboard();
@@ -329,7 +334,7 @@ namespace Minesweeper_Classic
             }
         }
 
-        // Called by tiles when clicked
+        // Called by picGameboard when clicked
         private void gameboardClicked(object sender, EventArgs e)
         {
             if (!gameRunning)
@@ -469,14 +474,14 @@ namespace Minesweeper_Classic
 
             gameRunning = false;
             timCountUp.Stop();
-            picFace.Image = imgFaces.Images[(int)Faces.Dead];
+            drawFace(Faces.Dead);
         }
 
         public void win()
         {
             gameRunning = false;
             timCountUp.Stop();
-            picFace.Image = imgFaces.Images[(int)Faces.Sunglasses];
+            drawFace(Faces.Sunglasses);
 
             // Set unflagged, unclicked bombs to flagged
             for (int r = 0; r < rows; r++)
