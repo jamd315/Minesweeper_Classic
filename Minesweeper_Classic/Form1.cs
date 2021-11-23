@@ -337,8 +337,6 @@ namespace Minesweeper_Classic
 
             MouseEventArgs me = (MouseEventArgs)e;
 
-            if (me.X < 0 || me.Y < 0)
-                MessageBox.Show("This does happen BTW");
             int row = me.Y / 16;
             int col = me.X / 16;
             if (row >= rows)
@@ -369,6 +367,11 @@ namespace Minesweeper_Classic
                     if (nearbyBombs == 0)
                     {
                         clickAllAdjacent(row, col, me);
+                    }
+                    unclickedRemaining--;
+                    if (unclickedRemaining == bombCount)
+                    {
+                        win();
                     }
                 }
                 if (tileState[row, col] == TileState.IsBomb)
@@ -474,6 +477,19 @@ namespace Minesweeper_Classic
             gameRunning = false;
             timCountUp.Stop();
             picFace.Image = imgFaces.Images[(int)Faces.Sunglasses];
+
+            // Set unflagged, unclicked bombs to flagged
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    if (tileState[r, c] == TileState.IsBomb)
+                    {
+                        gameboard[r, c] = Tiles.Flag;
+                        changeGameboard(r, c, imgTiles, (int)Tiles.Flag);
+                    }
+                }
+            }
             // TODO win sound
             // TODO high score storage
         }
