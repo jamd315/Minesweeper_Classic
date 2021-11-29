@@ -1,4 +1,6 @@
-﻿using System;
+﻿// TODO replace a random non-bomb tile if the first clicked is a bomb
+// TODO lots of Color stuff, ctrl+f any imgTiles, imgFace, etc.
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -86,6 +88,11 @@ namespace Minesweeper_Classic
 
         private void timCountUp_Tick(object sender, EventArgs e)
         {
+            if (timerCount >= 999)
+            {
+                timCountUp.Stop();
+                return;
+            }
             timerCount++;
             drawTimer();
         }
@@ -106,6 +113,7 @@ namespace Minesweeper_Classic
             rows = 9;
             cols = 9;
             bombCount = 10;
+            newGame();
         }
 
         // Intermediate difficulty
@@ -118,6 +126,7 @@ namespace Minesweeper_Classic
             rows = 16;
             cols = 16;
             bombCount = 40;
+            newGame();
         }
 
         // Expert difficulty
@@ -130,6 +139,7 @@ namespace Minesweeper_Classic
             rows = 16;
             cols = 30;
             bombCount = 99;
+            newGame();
         }
 
         // Custom difficulty
@@ -139,7 +149,8 @@ namespace Minesweeper_Classic
             intermediateToolStripMenuItem.Checked = false;
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = true;
-            // TODO custom difficulty form
+            getCustomDifficulty();
+            newGame();
         }
 
         // Just exit
@@ -291,6 +302,12 @@ namespace Minesweeper_Classic
             Point pt = new Point(16 * c, 16 * r);
             il.Draw(gameboardGraphic, pt, index);
             picGameboard.Image = gameboardBmp;
+        }
+
+        // Resize stuff after gameboard size change
+        private void resizeControls()
+        {
+            
         }
         #endregion Drawing
 
@@ -506,7 +523,7 @@ namespace Minesweeper_Classic
         }
 
         // Stop the game after a win condition
-        public void win()
+        private void win()
         {
             gameRunning = false;
             timCountUp.Stop();
@@ -527,7 +544,59 @@ namespace Minesweeper_Classic
             // TODO win sound
             // TODO high score storage
         }
+
+        // Use in handler for Game->Custom in toolstrip.  Gets and limits custom values for height, width, mines
+        private void getCustomDifficulty()
+        {
+            CustomDifficulty cd = new CustomDifficulty();
+            DialogResult dRes = cd.ShowDialog();
+            if (dRes == DialogResult.Cancel)  // If the user cancels, don't change anything
+                return;
+
+            // Get height and bound from 9 to 24
+            int tmpHeight = GetTextboxInt(cd.txtHeight, 9);
+            if (tmpHeight > 24)
+                tmpHeight = 24;
+            if (tmpHeight < 9)
+                tmpHeight = 9;
+
+            // Get width and bound from 9 to 30
+            int tmpWidth = GetTextboxInt(cd.txtWidth, 9);
+            if (tmpWidth > 30)
+                tmpWidth = 30;
+            if (tmpWidth < 9)
+                tmpWidth = 9;
+
+            // Get mines and bound from 10 to (height - 1) * (width - 1)
+            int tmpMines = GetTextboxInt(cd.txtMines, 10);
+            int maxMines = (tmpHeight - 1) * (tmpWidth - 1);
+            if (tmpMines > maxMines)
+                tmpMines = maxMines;
+            if (tmpMines < 10)
+                tmpMines = 10;
+
+            // Set the appropriate values
+            rows = tmpHeight;
+            cols = tmpWidth;
+            bombCount = tmpMines;
+        }
         #endregion GameManagement
+
+        #region Helpers
+        private int GetTextboxInt(TextBox txt, int defaultValue = 0)
+        {
+            bool success = int.TryParse(txt.Text, out int result);
+            if (success)
+            {
+                return result;
+            }
+            else
+            {
+                txt.Text = defaultValue.ToString();
+                return defaultValue;
+            }
+        }
+        #endregion Helpers
 
         #region Debug
         private void test1ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -539,7 +608,7 @@ namespace Minesweeper_Classic
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Test2");
-            drawGameboard();
+            
         }
         #endregion Debug
     }
