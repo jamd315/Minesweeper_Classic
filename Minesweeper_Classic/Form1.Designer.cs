@@ -267,7 +267,7 @@
             this.pnlHeader.Controls.Add(this.pnlTimer);
             this.pnlHeader.Controls.Add(this.pnlFlagCount);
             this.pnlHeader.Controls.Add(this.picFace);
-            this.pnlHeader.Location = new System.Drawing.Point(7, 32);
+            this.pnlHeader.Location = new System.Drawing.Point(8, 32);
             this.pnlHeader.Margin = new System.Windows.Forms.Padding(0);
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Size = new System.Drawing.Size(148, 32);
@@ -277,11 +277,12 @@
             // 
             // pnlTimer
             // 
+            this.pnlTimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlTimer.Controls.Add(this.picTimerO);
             this.pnlTimer.Controls.Add(this.picTimerT);
             this.pnlTimer.Controls.Add(this.picTimerH);
             this.pnlTimer.Location = new System.Drawing.Point(102, 3);
-            this.pnlTimer.Margin = new System.Windows.Forms.Padding(0);
             this.pnlTimer.Name = "pnlTimer";
             this.pnlTimer.Size = new System.Drawing.Size(39, 23);
             this.pnlTimer.TabIndex = 3;
@@ -371,6 +372,7 @@
             // 
             // picFace
             // 
+            this.picFace.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.picFace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picFace.InitialImage = null;
             this.picFace.Location = new System.Drawing.Point(59, 1);
@@ -483,8 +485,8 @@
             // 
             this.pnlGameboard.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlGameboard.Controls.Add(this.picGameboard);
-            this.pnlGameboard.Location = new System.Drawing.Point(7, 71);
-            this.pnlGameboard.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlGameboard.Location = new System.Drawing.Point(7, 72);
+            this.pnlGameboard.Margin = new System.Windows.Forms.Padding(2);
             this.pnlGameboard.Name = "pnlGameboard";
             this.pnlGameboard.Size = new System.Drawing.Size(148, 148);
             this.pnlGameboard.TabIndex = 2;
@@ -507,11 +509,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(164, 226);
+            this.ClientSize = new System.Drawing.Size(164, 229);
             this.Controls.Add(this.pnlGameboard);
             this.Controls.Add(this.pnlHeader);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;

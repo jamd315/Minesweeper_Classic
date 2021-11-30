@@ -267,13 +267,15 @@ namespace Minesweeper_Classic
             picFace.Image = imgFaces.Images[(int)f];
         }
 
-        // Render gameboard to a single image to improve performance
+        // Draw the entire gameboardBmp
         private void drawGameboard()
         {
-            if (gameboardBmp != null)
+            // Render gameboard to a single image to improve performance
+            if (gameboardBmp != null)  // If gameboardBmp exists, Dispose of the old one
                 gameboardBmp.Dispose();
             gameboardBmp = new Bitmap(cols * 16, rows * 16, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            if (gameboardGraphic != null)
+
+            if (gameboardGraphic != null)  // If gameboardGraphic exists, Dispose of the old one
                 gameboardGraphic.Dispose();
             gameboardGraphic = Graphics.FromImage(gameboardBmp);
             // Just copy the source pixels as quickly as possible
@@ -304,10 +306,21 @@ namespace Minesweeper_Classic
             picGameboard.Image = gameboardBmp;
         }
 
-        // Resize stuff after gameboard size change
+        // Resize controls and the form after the gameboard size is changed
         private void resizeControls()
         {
-            
+            int newHeight;
+            int newWidth;
+
+            picGameboard.Size = gameboardBmp.Size;  // picGameboard is just the size of its bmp
+            newWidth = gameboardBmp.Size.Width + 4;
+            newHeight = gameboardBmp.Size.Height + 4;
+            pnlGameboard.Size = new Size(newWidth, newHeight);
+            pnlHeader.Width = newWidth;  // Reuse newWidth
+
+            newWidth = 8 + 8 + pnlGameboard.Size.Width + 8 + 8;  // 8px margin either side plus 8px window border
+            newHeight = pnlGameboard.Location.Y + pnlGameboard.Size.Height + 44;  // Gross guess and check number
+            this.Size = new Size(newWidth, newHeight);
         }
         #endregion Drawing
 
@@ -350,6 +363,7 @@ namespace Minesweeper_Classic
 
             // Init gameboard to keep track of game state
             drawGameboard();
+            resizeControls();
             gameboard = new Tiles[rows, cols];
             tileState = new TileState[rows, cols];
             for (int r = 0; r < rows; r++)
@@ -371,8 +385,8 @@ namespace Minesweeper_Classic
                 if (tileState[bombRow, bombCol] != TileState.IsBomb)
                 {
                     tileState[bombRow, bombCol] = TileState.IsBomb;
+                    bombsAdded++;
                 }
-                bombsAdded++;
             }
         }
 
@@ -404,6 +418,12 @@ namespace Minesweeper_Classic
 
                 if (gameboard[row, col] == Tiles.Flag)  // Don't click flags
                     return;
+
+                // If this is the very first click and we clicked a bomb, move the bomb
+                if (tileState[row, col] == TileState.IsBomb && unclickedRemaining == rows * cols)
+                {
+                    moveBomb(row, col);
+                }
 
                 // Switch based on the state of the clicked tile
                 if (gameboard[row, col] == Tiles.Unclicked)
@@ -505,7 +525,6 @@ namespace Minesweeper_Classic
             gameRunning = false;
             timCountUp.Stop();
             drawFace(Faces.Dead);
-
             // Reveal un-flagged bombs
             for (int r = 0; r < rows; r++)
             {
@@ -515,7 +534,7 @@ namespace Minesweeper_Classic
                     if (tileState[r, c] == TileState.IsBomb && gameboard[r, c] != Tiles.Flag)
                     {
                         gameboard[r, c] = Tiles.Bomb;
-                        changeGameboard(rows, cols, imgTiles, (int)Tiles.Bomb);
+                        changeGameboard(r, c, imgTiles, (int)Tiles.Bomb);
                     }
                 }
             }
@@ -579,6 +598,26 @@ namespace Minesweeper_Classic
             rows = tmpHeight;
             cols = tmpWidth;
             bombCount = tmpMines;
+        }
+
+        // Prevent the user from clicking a bomb on the first click
+        private void moveBomb(int r, int c)
+        {
+            Random rand = new Random();
+            bool spotFound = false;
+            int newRow;
+            int newCol;
+            while (!spotFound)
+            {
+                newRow = rand.Next(rows);
+                newCol = rand.Next(cols);
+                if (tileState[newRow, newCol] == TileState.Nothing)
+                {
+                    spotFound = true;
+                    tileState[newRow, newCol] = TileState.IsBomb;
+                }
+            }
+            tileState[r, c] = TileState.Nothing;  // Do it after so the new bomb algorithm doesn't pick the same spot
         }
         #endregion GameManagement
 
