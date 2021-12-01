@@ -23,6 +23,7 @@ namespace Minesweeper_Classic
         private int unclickedRemaining;
         private bool gameRunning = true;
         private Faces faceState;
+        private bool useQuestionMarks = true;
 
         private Tiles[,] gameboard;         // Array of displayed tiles
         private TileState[,] tileState;     // Whether the tile is a bomb or not
@@ -177,6 +178,13 @@ namespace Minesweeper_Classic
         {
             color = !color;
             totalRedraw();
+        }
+
+        // Whether to use question marks or not
+        private void marksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // In the original, existing question marks are not removed, only changes going forward
+            useQuestionMarks = !useQuestionMarks;
         }
         #endregion Toolstrip
 
@@ -485,7 +493,7 @@ namespace Minesweeper_Classic
                     changeGameboard(row, col, (int)Tiles.BombClicked);
                 }
             }
-            else if (me.Button == MouseButtons.Right)
+            else if (me.Button == MouseButtons.Right)  // On a right click, mark with flag, question mark (if enabled), or clear mark
             {
 
                 switch (gameboard[row, col])
@@ -496,9 +504,17 @@ namespace Minesweeper_Classic
                         flagCount--;
                         drawFlagCount();
                         break;
-                    case Tiles.Flag:  // Flag, make it a question
-                        changeGameboard(row, col, (int)Tiles.QuestionUnclicked);
-                        gameboard[row, col] = Tiles.QuestionUnclicked;
+                    case Tiles.Flag:  // Flag, make it a question, or unclicked if question marks aren't enabled
+                        if (useQuestionMarks)
+                        {
+                            changeGameboard(row, col, (int)Tiles.QuestionUnclicked);
+                            gameboard[row, col] = Tiles.QuestionUnclicked;
+                        }
+                        else
+                        {
+                            changeGameboard(row, col, (int)Tiles.Unclicked);
+                            gameboard[row, col] = Tiles.Unclicked;
+                        }
                         flagCount++;
                         drawFlagCount();
                         break;

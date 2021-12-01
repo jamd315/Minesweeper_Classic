@@ -182,6 +182,7 @@
             this.marksToolStripMenuItem.Name = "marksToolStripMenuItem";
             this.marksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.marksToolStripMenuItem.Text = "Marks (?)";
+            this.marksToolStripMenuItem.Click += new System.EventHandler(this.marksToolStripMenuItem_Click);
             // 
             // colorsToolStripMenuItem
             // 
