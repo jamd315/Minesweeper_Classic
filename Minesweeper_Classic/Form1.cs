@@ -1,5 +1,4 @@
-﻿// TODO replace a random non-bomb tile if the first clicked is a bomb
-// TODO lots of Color stuff, ctrl+f any imgTiles, imgFace, etc.
+﻿// TODO want to unify variable names (bombs vs mines, use of tiles vs gameboard, etc)
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +22,7 @@ namespace Minesweeper_Classic
         private int cols = 9;
         private int unclickedRemaining;
         private bool gameRunning = true;
+        private Faces faceState;
 
         private Tiles[,] gameboard;         // Array of displayed tiles
         private TileState[,] tileState;     // Whether the tile is a bomb or not
@@ -171,6 +171,13 @@ namespace Minesweeper_Classic
         {
             newGame();
         }
+
+        // Change the colors, then redraw
+        private void colorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            color = !color;
+            totalRedraw();
+        }
         #endregion Toolstrip
 
         #region FaceManagement
@@ -243,11 +250,13 @@ namespace Minesweeper_Classic
             int hundreds = (flagCount % 1000 - flagCount % 100) / 100;
             int tens = (flagCount % 100 - flagCount % 10) / 10;
             int ones = flagCount % 10;
+
             ImageList imList;
             if (color)
                 imList = imgSevenSegment;
             else
                 imList = imgSevenSegment_BW;
+
             if (picFlagCountH.Image != null)
                 picFlagCountH.Image.Dispose();
             picFlagCountH.Image = imList.Images[hundreds];
@@ -264,7 +273,15 @@ namespace Minesweeper_Classic
         {
             if (picFace.Image != null)
                 picFace.Image.Dispose();
-            picFace.Image = imgFaces.Images[(int)f];
+
+            ImageList imList;
+            if (color)
+                imList = imgFaces;
+            else
+                imList = imgFaces_BW;
+
+            faceState = f;
+            picFace.Image = imList.Images[(int)f];
         }
 
         // Draw the entire gameboardBmp
@@ -284,6 +301,12 @@ namespace Minesweeper_Classic
             // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.drawing2d.compositingquality?view=netframework-4.7.1
             gameboardGraphic.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.AssumeLinear;
 
+            ImageList imList;
+            if (color)
+                imList = imgTiles;
+            else
+                imList = imgTiles_BW;
+
             Point pt = new Point();
             for (int r = 0; r < rows * 16; r += 16)
             {
@@ -291,7 +314,7 @@ namespace Minesweeper_Classic
                 {
                     pt.X = c;
                     pt.Y = r;
-                    imgTiles.Draw(gameboardGraphic, pt, (int)Tiles.Unclicked);
+                    imList.Draw(gameboardGraphic, pt, (int)Tiles.Unclicked);
                 }
             }
 
@@ -299,10 +322,16 @@ namespace Minesweeper_Classic
         }
 
         // Just change part of the gameboardBmp
-        private void changeGameboard(int r, int c, ImageList il, int index)
+        private void changeGameboard(int r, int c, int index)
         {
+            ImageList imList;
+            if (color)
+                imList = imgTiles;
+            else
+                imList = imgTiles_BW;
+
             Point pt = new Point(16 * c, 16 * r);
-            il.Draw(gameboardGraphic, pt, index);
+            imList.Draw(gameboardGraphic, pt, index);
             picGameboard.Image = gameboardBmp;
         }
 
@@ -321,6 +350,15 @@ namespace Minesweeper_Classic
             newWidth = 8 + 8 + pnlGameboard.Size.Width + 8 + 8;  // 8px margin either side plus 8px window border
             newHeight = pnlGameboard.Location.Y + pnlGameboard.Size.Height + 44;  // Gross guess and check number
             this.Size = new Size(newWidth, newHeight);
+        }
+
+        // Redraw everything (used for when color is enabled or disabled)
+        private void totalRedraw()
+        {
+            drawTimer();
+            drawFlagCount();
+            drawFace(faceState);
+            drawGameboard();
         }
         #endregion Drawing
 
@@ -429,7 +467,7 @@ namespace Minesweeper_Classic
                 if (gameboard[row, col] == Tiles.Unclicked)
                 {
                     int nearbyBombs = adjacentMineCount(row, col);
-                    changeGameboard(row, col, imgTiles, nearbyBombs);
+                    changeGameboard(row, col, nearbyBombs);
                     gameboard[row, col] = (Tiles)nearbyBombs;
                     if (nearbyBombs == 0)
                     {
@@ -444,7 +482,7 @@ namespace Minesweeper_Classic
                 if (tileState[row, col] == TileState.IsBomb)
                 {
                     gameOver();
-                    changeGameboard(row, col, imgTiles, (int)Tiles.BombClicked);
+                    changeGameboard(row, col, (int)Tiles.BombClicked);
                 }
             }
             else if (me.Button == MouseButtons.Right)
@@ -453,20 +491,20 @@ namespace Minesweeper_Classic
                 switch (gameboard[row, col])
                 {
                     case Tiles.Unclicked:  // Unclicked, make it a flag
-                        changeGameboard(row, col, imgTiles, (int)Tiles.Flag);
+                        changeGameboard(row, col, (int)Tiles.Flag);
                         gameboard[row, col] = Tiles.Flag;
                         flagCount--;
                         drawFlagCount();
                         break;
                     case Tiles.Flag:  // Flag, make it a question
-                        changeGameboard(row, col, imgTiles, (int)Tiles.QuestionUnclicked);
+                        changeGameboard(row, col, (int)Tiles.QuestionUnclicked);
                         gameboard[row, col] = Tiles.QuestionUnclicked;
                         flagCount++;
                         drawFlagCount();
                         break;
                     case Tiles.Question:
                     case Tiles.QuestionUnclicked:  // Question, make it unclicked
-                        changeGameboard(row, col, imgTiles, (int)Tiles.Unclicked);
+                        changeGameboard(row, col, (int)Tiles.Unclicked);
                         gameboard[row, col] = Tiles.Unclicked;
                         break;
                 }
@@ -534,7 +572,7 @@ namespace Minesweeper_Classic
                     if (tileState[r, c] == TileState.IsBomb && gameboard[r, c] != Tiles.Flag)
                     {
                         gameboard[r, c] = Tiles.Bomb;
-                        changeGameboard(r, c, imgTiles, (int)Tiles.Bomb);
+                        changeGameboard(r, c, (int)Tiles.Bomb);
                     }
                 }
             }
@@ -556,7 +594,7 @@ namespace Minesweeper_Classic
                     if (tileState[r, c] == TileState.IsBomb)
                     {
                         gameboard[r, c] = Tiles.Flag;
-                        changeGameboard(r, c, imgTiles, (int)Tiles.Flag);
+                        changeGameboard(r, c, (int)Tiles.Flag);
                     }
                 }
             }
