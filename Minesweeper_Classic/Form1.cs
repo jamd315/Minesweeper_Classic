@@ -1,5 +1,4 @@
 ﻿// TODO want to unify variable names (bombs vs mines, use of tiles vs gameboard, etc)
-// TODO fix wrong flag placement display (should be Tiles.NoBomb) on loss
 using Microsoft.Win32;
 using System;
 using System.Drawing;
@@ -38,6 +37,7 @@ namespace Minesweeper_Classic
 
         private Point initPos;
 
+        #region Enums
         private enum Faces: int  // Used with imgFaces, imgFaces_BW
         {
             Dead = 0,
@@ -104,6 +104,7 @@ namespace Minesweeper_Classic
             SoundEnabled = 3,  // Not sure why 3 is used, but it is.  10 also works
             SoundEnabledAlternate = 10
         }
+        #endregion Enums
 
         public Form1()
         {
@@ -626,6 +627,12 @@ namespace Minesweeper_Classic
                         gameboard[r, c] = Tiles.Bomb;
                         changeGameboard(r, c, (int)Tiles.Bomb);
                     }
+                    // If incorrectly flagged, show the NoBomb tile
+                    if (tileState[r, c] == TileState.Nothing && gameboard[r, c] == Tiles.Flag)
+                    {
+                        gameboard[r, c] = Tiles.NoBomb;
+                        changeGameboard(r, c, (int)Tiles.NoBomb);
+                    }
                 }
             }
 
@@ -688,6 +695,8 @@ namespace Minesweeper_Classic
                     break;
             }
             saveScores();
+            HighscoreScreen hs = new HighscoreScreen();
+            hs.ShowDialog(this);
             // TODO win sound
         }
 
@@ -808,6 +817,18 @@ namespace Minesweeper_Classic
             winmineKey.SetValue("Time3", time3);
         }
 
+        // Reset the scores
+        public void resetScores()
+        {
+            name1 = "Anonymous";
+            name2 = "Anonymous";
+            name3 = "Anonymous";
+            time1 = 999;
+            time2 = 999;
+            time3 = 999;
+            saveScores();
+        }
+
         // Set up the registry keys used with default values
         private RegistryKey initRegistry()
         {
@@ -851,18 +872,6 @@ namespace Minesweeper_Classic
                 initRegistry();
             return winmineKey;
         }
-
-        // Reset the scores
-        public void resetScores()
-        {
-            name1 = "Anonymous";
-            name2 = "Anonymous";
-            name3 = "Anonymous";
-            time1 = 999;
-            time2 = 999;
-            time3 = 999;
-            saveScores();
-        }
         #endregion Saving
 
         #region Helpers
@@ -892,11 +901,6 @@ namespace Minesweeper_Classic
         {
             //MessageBox.Show("Test2");
             saveConfig();
-        }
-
-        public Point GetLocation()
-        {
-            return this.Location;
         }
         #endregion Debug
     }

@@ -23,7 +23,7 @@ namespace Minesweeper_Classic
             if (parent == null)
                 throw new NullReferenceException();
 
-            Point initLocation = parent.GetLocation();
+            Point initLocation = parent.Location;
             initLocation.X += 8;
             initLocation.Y += 100;
             this.Location = initLocation;

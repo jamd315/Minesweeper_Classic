@@ -24,11 +24,13 @@ namespace Minesweeper_Classic
             parent = (Form1)Owner;
             if (parent == null)
                 throw new NullReferenceException();
+            displayScores();
         }
 
         private void btnReset_Click(object sender, EventArgs e)
         {
             parent.resetScores();
+            displayScores();
         }
 
         private void displayScores()

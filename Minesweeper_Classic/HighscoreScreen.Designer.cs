@@ -32,11 +32,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lblBeginnerTime = new System.Windows.Forms.Label();
-            this.lblIntermediateName = new System.Windows.Forms.Label();
-            this.lblExpertName = new System.Windows.Forms.Label();
-            this.lblBeginnerName = new System.Windows.Forms.Label();
             this.lblIntermediateTime = new System.Windows.Forms.Label();
             this.lblExpertTime = new System.Windows.Forms.Label();
+            this.lblBeginnerName = new System.Windows.Forms.Label();
+            this.lblIntermediateName = new System.Windows.Forms.Label();
+            this.lblExpertName = new System.Windows.Forms.Label();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -77,29 +77,29 @@
             this.lblBeginnerTime.Location = new System.Drawing.Point(102, 27);
             this.lblBeginnerTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.lblBeginnerTime.Name = "lblBeginnerTime";
-            this.lblBeginnerTime.Size = new System.Drawing.Size(68, 13);
+            this.lblBeginnerTime.Size = new System.Drawing.Size(59, 13);
             this.lblBeginnerTime.TabIndex = 3;
-            this.lblBeginnerTime.Text = "999 seconds";
+            this.lblBeginnerTime.Text = "-1 seconds";
             // 
-            // lblIntermediateName
+            // lblIntermediateTime
             // 
-            this.lblIntermediateName.AutoSize = true;
-            this.lblIntermediateName.Location = new System.Drawing.Point(102, 50);
-            this.lblIntermediateName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.lblIntermediateName.Name = "lblIntermediateName";
-            this.lblIntermediateName.Size = new System.Drawing.Size(68, 13);
-            this.lblIntermediateName.TabIndex = 4;
-            this.lblIntermediateName.Text = "999 seconds";
+            this.lblIntermediateTime.AutoSize = true;
+            this.lblIntermediateTime.Location = new System.Drawing.Point(102, 50);
+            this.lblIntermediateTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblIntermediateTime.Name = "lblIntermediateTime";
+            this.lblIntermediateTime.Size = new System.Drawing.Size(59, 13);
+            this.lblIntermediateTime.TabIndex = 4;
+            this.lblIntermediateTime.Text = "-1 seconds";
             // 
-            // lblExpertName
+            // lblExpertTime
             // 
-            this.lblExpertName.AutoSize = true;
-            this.lblExpertName.Location = new System.Drawing.Point(102, 73);
-            this.lblExpertName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.lblExpertName.Name = "lblExpertName";
-            this.lblExpertName.Size = new System.Drawing.Size(68, 13);
-            this.lblExpertName.TabIndex = 5;
-            this.lblExpertName.Text = "999 seconds";
+            this.lblExpertTime.AutoSize = true;
+            this.lblExpertTime.Location = new System.Drawing.Point(102, 73);
+            this.lblExpertTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblExpertTime.Name = "lblExpertTime";
+            this.lblExpertTime.Size = new System.Drawing.Size(59, 13);
+            this.lblExpertTime.TabIndex = 5;
+            this.lblExpertTime.Text = "-1 seconds";
             // 
             // lblBeginnerName
             // 
@@ -107,29 +107,29 @@
             this.lblBeginnerName.Location = new System.Drawing.Point(186, 27);
             this.lblBeginnerName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.lblBeginnerName.Name = "lblBeginnerName";
-            this.lblBeginnerName.Size = new System.Drawing.Size(62, 13);
+            this.lblBeginnerName.Size = new System.Drawing.Size(100, 13);
             this.lblBeginnerName.TabIndex = 6;
-            this.lblBeginnerName.Text = "Anonymous";
+            this.lblBeginnerName.Text = "NAMENAMENAME";
             // 
-            // lblIntermediateTime
+            // lblIntermediateName
             // 
-            this.lblIntermediateTime.AutoSize = true;
-            this.lblIntermediateTime.Location = new System.Drawing.Point(186, 50);
-            this.lblIntermediateTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.lblIntermediateTime.Name = "lblIntermediateTime";
-            this.lblIntermediateTime.Size = new System.Drawing.Size(62, 13);
-            this.lblIntermediateTime.TabIndex = 7;
-            this.lblIntermediateTime.Text = "Anonymous";
+            this.lblIntermediateName.AutoSize = true;
+            this.lblIntermediateName.Location = new System.Drawing.Point(186, 50);
+            this.lblIntermediateName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblIntermediateName.Name = "lblIntermediateName";
+            this.lblIntermediateName.Size = new System.Drawing.Size(100, 13);
+            this.lblIntermediateName.TabIndex = 7;
+            this.lblIntermediateName.Text = "NAMENAMENAME";
             // 
-            // lblExpertTime
+            // lblExpertName
             // 
-            this.lblExpertTime.AutoSize = true;
-            this.lblExpertTime.Location = new System.Drawing.Point(186, 73);
-            this.lblExpertTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.lblExpertTime.Name = "lblExpertTime";
-            this.lblExpertTime.Size = new System.Drawing.Size(62, 13);
-            this.lblExpertTime.TabIndex = 8;
-            this.lblExpertTime.Text = "Anonymous";
+            this.lblExpertName.AutoSize = true;
+            this.lblExpertName.Location = new System.Drawing.Point(186, 73);
+            this.lblExpertName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblExpertName.Name = "lblExpertName";
+            this.lblExpertName.Size = new System.Drawing.Size(100, 13);
+            this.lblExpertName.TabIndex = 8;
+            this.lblExpertName.Text = "NAMENAMENAME";
             // 
             // btnOK
             // 
@@ -158,11 +158,11 @@
             this.ClientSize = new System.Drawing.Size(283, 144);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.lblExpertTime);
-            this.Controls.Add(this.lblIntermediateTime);
-            this.Controls.Add(this.lblBeginnerName);
             this.Controls.Add(this.lblExpertName);
             this.Controls.Add(this.lblIntermediateName);
+            this.Controls.Add(this.lblBeginnerName);
+            this.Controls.Add(this.lblExpertTime);
+            this.Controls.Add(this.lblIntermediateTime);
             this.Controls.Add(this.lblBeginnerTime);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -182,11 +182,11 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblBeginnerTime;
-        private System.Windows.Forms.Label lblIntermediateName;
-        private System.Windows.Forms.Label lblExpertName;
-        private System.Windows.Forms.Label lblBeginnerName;
         private System.Windows.Forms.Label lblIntermediateTime;
         private System.Windows.Forms.Label lblExpertTime;
+        private System.Windows.Forms.Label lblBeginnerName;
+        private System.Windows.Forms.Label lblIntermediateName;
+        private System.Windows.Forms.Label lblExpertName;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnReset;
     }
