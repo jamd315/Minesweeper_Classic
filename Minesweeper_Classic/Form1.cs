@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 
 namespace Minesweeper_Classic
@@ -28,12 +29,19 @@ namespace Minesweeper_Classic
         private Graphics gameboardGraphic;  // Edits gameboardBmp
 
         // Store this way because this is how the registry stores them
+        // Used by HighscoreScreen form
         public string name1;
         public string name2;
         public string name3;
         public int time1;
         public int time2;
         public int time3;
+
+        // Sounds
+        SoundPlayer winSound = new SoundPlayer(Properties.Resources.win);
+        SoundPlayer tickSound = new SoundPlayer(Properties.Resources.tick);
+        SoundPlayer bombSound = new SoundPlayer(Properties.Resources.bomb);
+
 
         private Point initPos;
 
@@ -118,6 +126,8 @@ namespace Minesweeper_Classic
                 timCountUp.Stop();
                 return;
             }
+            if (soundState != SoundState.SoundDisabled)
+                tickSound.Play();
             timerCount++;
             drawTimer();
         }
@@ -222,6 +232,16 @@ namespace Minesweeper_Classic
         {
             // In the original, existing question marks are not removed, only changes going forward
             useQuestionMarks = !useQuestionMarks;
+        }
+
+        // Enable or disable sound
+        private void soundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Toggle
+            if (soundState == SoundState.SoundDisabled)
+                soundState = SoundState.SoundEnabled;
+            else
+                soundState = SoundState.SoundDisabled;
         }
         #endregion Toolstrip
 
@@ -616,6 +636,9 @@ namespace Minesweeper_Classic
             gameRunning = false;
             timCountUp.Stop();
             drawFace(Faces.Dead);
+            if (soundState != SoundState.SoundDisabled)
+                bombSound.Play();
+
             // Reveal un-flagged bombs
             for (int r = 0; r < rows; r++)
             {
@@ -644,6 +667,8 @@ namespace Minesweeper_Classic
             gameRunning = false;
             timCountUp.Stop();
             drawFace(Faces.Sunglasses);
+            if (soundState != SoundState.SoundDisabled)
+                winSound.Play();
 
             // Set unflagged, unclicked bombs to flagged
             for (int r = 0; r < rows; r++)
@@ -667,6 +692,8 @@ namespace Minesweeper_Classic
                         hse.ShowDialog(this);
                         name1 = hse.txtName.Text;
                         time1 = timerCount;
+                        HighscoreScreen hs = new HighscoreScreen();
+                        hs.ShowDialog(this);
                     }
                     break;
 
@@ -677,6 +704,8 @@ namespace Minesweeper_Classic
                         hse.ShowDialog(this);
                         name2 = hse.txtName.Text;
                         time2 = timerCount;
+                        HighscoreScreen hs = new HighscoreScreen();
+                        hs.ShowDialog(this);
                     }
                     break;
 
@@ -687,6 +716,8 @@ namespace Minesweeper_Classic
                         hse.ShowDialog(this);
                         name3 = hse.txtName.Text;
                         time3 = timerCount;
+                        HighscoreScreen hs = new HighscoreScreen();
+                        hs.ShowDialog(this);
                     }
                     break;
 
@@ -695,8 +726,6 @@ namespace Minesweeper_Classic
                     break;
             }
             saveScores();
-            HighscoreScreen hs = new HighscoreScreen();
-            hs.ShowDialog(this);
             // TODO win sound
         }
 
@@ -773,6 +802,27 @@ namespace Minesweeper_Classic
             int x = (int)winmineKey.GetValue("Xpos", 80);
             int y = (int)winmineKey.GetValue("Ypos", 80);
             initPos = new Point(x, y);
+
+            // Make the displayed toolstrip consistent with the internal settings variables
+            colorsToolStripMenuItem.Checked = color;
+            soundToolStripMenuItem.Checked = soundState == SoundState.SoundEnabled || soundState == SoundState.SoundEnabledAlternate;
+            marksToolStripMenuItem.Checked = useQuestionMarks;
+            switch (difficulty)
+            {
+                case (Difficulty.Beginner):
+                    beginnerToolStripMenuItem.PerformClick();
+                    break;
+                case (Difficulty.Intermediate):
+                    intermediateToolStripMenuItem.PerformClick();
+                    break;
+                case (Difficulty.Expert):
+                    expertToolStripMenuItem.PerformClick();
+                    break;
+                case (Difficulty.Custom):
+                default:
+                    customToolStripMenuItem.PerformClick();
+                    break;
+            }
         }
 
         // Save config to the registry
@@ -899,8 +949,8 @@ namespace Minesweeper_Classic
 
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Test2");
-            saveConfig();
+            SoundPlayer simpleSound = new SoundPlayer(Properties.Resources.win);
+            simpleSound.Play();
         }
         #endregion Debug
     }
