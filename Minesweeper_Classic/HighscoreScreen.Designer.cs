@@ -168,7 +168,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "HighscoreScreen";
-            this.Text = "HighscoreScreen";
+            this.Text = "Fastest Mine Sweepers";
             this.ResumeLayout(false);
             this.PerformLayout();
 

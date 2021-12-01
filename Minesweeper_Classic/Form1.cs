@@ -1,12 +1,8 @@
 ﻿// TODO want to unify variable names (bombs vs mines, use of tiles vs gameboard, etc)
+// TODO fix wrong flag placement display (should be Tiles.NoBomb) on loss
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Minesweeper_Classic
@@ -24,11 +20,23 @@ namespace Minesweeper_Classic
         private bool gameRunning = true;
         private Faces faceState;
         private bool useQuestionMarks = true;
+        public Difficulty difficulty = Difficulty.Beginner;  // Used by HighscoreEntry form
+        private SoundState soundState = SoundState.SoundDisabled;
 
         private Tiles[,] gameboard;         // Array of displayed tiles
         private TileState[,] tileState;     // Whether the tile is a bomb or not
         private Bitmap gameboardBmp;        // The gameboard image displayed in picGameboard
         private Graphics gameboardGraphic;  // Edits gameboardBmp
+
+        // Store this way because this is how the registry stores them
+        private string name1;
+        private string name2;
+        private string name3;
+        private int time1;
+        private int time2;
+        private int time3;
+
+        private Point initPos;
 
         private enum Faces: int  // Used with imgFaces, imgFaces_BW
         {
@@ -82,6 +90,21 @@ namespace Minesweeper_Classic
             Dash = 11
         }
 
+        public enum Difficulty: int  // Used when saving data, and by HighscoreEntry form
+        {
+            Beginner = 0,
+            Intermediate = 1,
+            Expert = 2,
+            Custom = 3
+        }
+
+        private enum SoundState: int
+        {
+            SoundDisabled = 0,
+            SoundEnabled = 3,  // Not sure why 3 is used, but it is.  10 also works
+            SoundEnabledAlternate = 10
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -100,7 +123,16 @@ namespace Minesweeper_Classic
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            loadConfig();
+            loadScores();
+            this.Location = initPos;  // Reset window to previous location
             newGame();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            saveConfig();
+            saveScores();
         }
 
         #region Toolstrip
@@ -114,6 +146,7 @@ namespace Minesweeper_Classic
             rows = 9;
             cols = 9;
             bombCount = 10;
+            difficulty = Difficulty.Beginner;
             newGame();
         }
 
@@ -127,6 +160,7 @@ namespace Minesweeper_Classic
             rows = 16;
             cols = 16;
             bombCount = 40;
+            difficulty = Difficulty.Intermediate;
             newGame();
         }
 
@@ -140,6 +174,7 @@ namespace Minesweeper_Classic
             rows = 16;
             cols = 30;
             bombCount = 99;
+            difficulty = Difficulty.Expert;
             newGame();
         }
 
@@ -150,6 +185,7 @@ namespace Minesweeper_Classic
             intermediateToolStripMenuItem.Checked = false;
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = true;
+            difficulty = Difficulty.Custom;
             getCustomDifficulty();
             newGame();
         }
@@ -614,11 +650,42 @@ namespace Minesweeper_Classic
                     }
                 }
             }
+
+            switch (difficulty)
+            {
+                case Difficulty.Beginner:
+                    if (timerCount < time1)
+                    {
+                        HighscoreEntry hse = new HighscoreEntry();
+                        hse.ShowDialog();
+                    }
+                    break;
+
+                case Difficulty.Intermediate:
+                    if (timerCount < time2)
+                    {
+                        HighscoreEntry hse = new HighscoreEntry();
+                        hse.ShowDialog();
+                    }
+                    break;
+
+                case Difficulty.Expert:
+                    if (timerCount < time3)
+                    {
+                        HighscoreEntry hse = new HighscoreEntry();
+                        hse.ShowDialog();
+                    }
+                    break;
+
+                case Difficulty.Custom:
+                default:
+                    break;
+            }
             // TODO win sound
             // TODO high score storage
         }
 
-        // Use in handler for Game->Custom in toolstrip.  Gets and limits custom values for height, width, mines
+        // Used in handler for Game->Custom in toolstrip.  Gets and limits custom values for height, width, mines
         private void getCustomDifficulty()
         {
             CustomDifficulty cd = new CustomDifficulty();
@@ -675,6 +742,111 @@ namespace Minesweeper_Classic
         }
         #endregion GameManagement
 
+        #region Saving
+        // Load the config from the registry
+        private void loadConfig()
+        {
+            RegistryKey winmineKey = getWinmineKey();
+
+            color = (int)winmineKey.GetValue("Color", 1) == 1;
+            difficulty = (Difficulty)winmineKey.GetValue("Difficulty", 0);
+            rows = (int)winmineKey.GetValue("Height", 9);
+            useQuestionMarks = (int)winmineKey.GetValue("Mark", 1) == 1;
+            bombCount = (int)winmineKey.GetValue("Mines", 10);
+            soundState = (SoundState)winmineKey.GetValue("Sound", 0);
+            cols = (int)winmineKey.GetValue("Width", 9);
+            int x = (int)winmineKey.GetValue("Xpos", 80);
+            int y = (int)winmineKey.GetValue("Ypos", 80);
+            initPos = new Point(x, y);
+        }
+
+        // Save config to the registry
+        private void saveConfig()
+        {
+            RegistryKey winmineKey = getWinmineKey();
+
+            winmineKey.SetValue("Color", color ? 1 : 0);
+            winmineKey.SetValue("Difficulty", (int)difficulty);
+            winmineKey.SetValue("Height", rows);
+            winmineKey.SetValue("Mark", useQuestionMarks ? 1 : 0);
+            winmineKey.SetValue("Mines", bombCount);
+            winmineKey.SetValue("Sound", (int)soundState);
+            winmineKey.SetValue("Width", cols);
+            winmineKey.SetValue("Xpos", this.Location.X);
+            winmineKey.SetValue("Ypos", this.Location.Y);
+        }
+
+        // Load scores from the registry
+        private void loadScores()
+        {
+            RegistryKey winmineKey = getWinmineKey();
+
+            name1 = (string)winmineKey.GetValue("Name1", "Anonymous");
+            name2 = (string)winmineKey.GetValue("Name2", "Anonymous");
+            name3 = (string)winmineKey.GetValue("Name3", "Anonymous");
+            time1 = (int)winmineKey.GetValue("Time1", 999);
+            time2 = (int)winmineKey.GetValue("Time2", 999);
+            time3 = (int)winmineKey.GetValue("Time3", 999);
+        }
+
+        // Save scores to the registry
+        private void saveScores()
+        {
+            RegistryKey winmineKey = getWinmineKey();
+
+            winmineKey.SetValue("Name1", name1);
+            winmineKey.SetValue("Name2", name2);
+            winmineKey.SetValue("Name3", name3);
+            winmineKey.SetValue("Time1", time1);
+            winmineKey.SetValue("Time2", time2);
+            winmineKey.SetValue("Time3", time3);
+        }
+
+        // Set up the registry keys used with default values
+        private RegistryKey initRegistry()
+        {
+            RegistryKey hkcu = Registry.CurrentUser;
+            RegistryKey microsoftKey = hkcu.OpenSubKey("SOFTWARE\\Microsoft", true);
+            MessageBox.Show(microsoftKey.ToString());
+            RegistryKey winmineKey = microsoftKey.CreateSubKey("winmine", true);
+            if (winmineKey == null)  // I don't think CreateSubKey should return null, but it could, so check it
+                throw new Exception();
+
+            // Some basic default values
+            winmineKey.SetValue("AlreadyPlayed", 1);
+            winmineKey.SetValue("Color", 1);
+            winmineKey.SetValue("Difficulty", 0);
+            winmineKey.SetValue("Height", 9);
+            winmineKey.SetValue("Mark", 1);
+            winmineKey.SetValue("Mines", 10);
+            winmineKey.SetValue("Name1", "Anonymous");
+            winmineKey.SetValue("Name2", "Anonymous");
+            winmineKey.SetValue("Name3", "Anonymous");
+            winmineKey.SetValue("Sound", 0);
+            winmineKey.SetValue("Time1", 999);
+            winmineKey.SetValue("Time2", 999);
+            winmineKey.SetValue("Time3", 999);
+            winmineKey.SetValue("Width", 9);
+            winmineKey.SetValue("Xpos", 80);
+            winmineKey.SetValue("Ypos", 80);
+
+            return winmineKey;
+        }
+
+        // Shortcut for getting the subkey, also does checks and initialization if needed
+        private RegistryKey getWinmineKey()
+        {
+            RegistryKey winmineKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\winmine", true);
+            if (winmineKey == null)  // If the subkey doesn't yet exist, make it and get a new reference
+            {
+                winmineKey = initRegistry();
+            }
+            if ((int)winmineKey.GetValue("AlreadyPlayed") != 1)
+                initRegistry();
+            return winmineKey;
+        }
+        #endregion Saving
+
         #region Helpers
         private int GetTextboxInt(TextBox txt, int defaultValue = 0)
         {
@@ -700,8 +872,8 @@ namespace Minesweeper_Classic
 
         private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Test2");
-            
+            //MessageBox.Show("Test2");
+            saveConfig();
         }
         #endregion Debug
     }
