@@ -73,6 +73,7 @@ namespace Minesweeper_Classic
             this.Controls.Add(this.txtName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "HighscoreEntry";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "HighscoreEntry";
             this.Load += new System.EventHandler(this.HighscoreEntry_Load);
             this.ResumeLayout(false);
@@ -81,9 +82,8 @@ namespace Minesweeper_Classic
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label lblPrompt;
         private System.Windows.Forms.Button btnOK;
+        public System.Windows.Forms.TextBox txtName;
     }
 }

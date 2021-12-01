@@ -19,8 +19,16 @@ namespace Minesweeper_Classic
 
         private void HighscoreEntry_Load(object sender, EventArgs e)
         {
-            
-            lblPrompt.Text = $"You have the fastest time for\n{Form1.difficulty.ToString().ToLower()} level.\nPlease enter your name.";
+            Form1 parent = (Form1)Owner;
+            if (parent == null)
+                throw new NullReferenceException();
+
+            Point initLocation = parent.GetLocation();
+            initLocation.X += 8;
+            initLocation.Y += 100;
+            this.Location = initLocation;
+
+            lblPrompt.Text = $"You have the fastest time for\n{parent.difficulty.ToString().ToLower()} level.\nPlease enter your name.";
         }
     }
 }

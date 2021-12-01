@@ -31,14 +31,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.lblBeginnerTime = new System.Windows.Forms.Label();
+            this.lblIntermediateName = new System.Windows.Forms.Label();
+            this.lblExpertName = new System.Windows.Forms.Label();
+            this.lblBeginnerName = new System.Windows.Forms.Label();
+            this.lblIntermediateTime = new System.Windows.Forms.Label();
+            this.lblExpertTime = new System.Windows.Forms.Label();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -71,104 +71,106 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "Expert:";
             // 
-            // label4
+            // lblBeginnerTime
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(102, 27);
-            this.label4.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(68, 13);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "999 seconds";
+            this.lblBeginnerTime.AutoSize = true;
+            this.lblBeginnerTime.Location = new System.Drawing.Point(102, 27);
+            this.lblBeginnerTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblBeginnerTime.Name = "lblBeginnerTime";
+            this.lblBeginnerTime.Size = new System.Drawing.Size(68, 13);
+            this.lblBeginnerTime.TabIndex = 3;
+            this.lblBeginnerTime.Text = "999 seconds";
             // 
-            // label5
+            // lblIntermediateName
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(102, 50);
-            this.label5.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(68, 13);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "999 seconds";
+            this.lblIntermediateName.AutoSize = true;
+            this.lblIntermediateName.Location = new System.Drawing.Point(102, 50);
+            this.lblIntermediateName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblIntermediateName.Name = "lblIntermediateName";
+            this.lblIntermediateName.Size = new System.Drawing.Size(68, 13);
+            this.lblIntermediateName.TabIndex = 4;
+            this.lblIntermediateName.Text = "999 seconds";
             // 
-            // label6
+            // lblExpertName
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(102, 73);
-            this.label6.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(68, 13);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "999 seconds";
+            this.lblExpertName.AutoSize = true;
+            this.lblExpertName.Location = new System.Drawing.Point(102, 73);
+            this.lblExpertName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblExpertName.Name = "lblExpertName";
+            this.lblExpertName.Size = new System.Drawing.Size(68, 13);
+            this.lblExpertName.TabIndex = 5;
+            this.lblExpertName.Text = "999 seconds";
             // 
-            // label7
+            // lblBeginnerName
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(186, 27);
-            this.label7.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(62, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Anonymous";
+            this.lblBeginnerName.AutoSize = true;
+            this.lblBeginnerName.Location = new System.Drawing.Point(186, 27);
+            this.lblBeginnerName.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblBeginnerName.Name = "lblBeginnerName";
+            this.lblBeginnerName.Size = new System.Drawing.Size(62, 13);
+            this.lblBeginnerName.TabIndex = 6;
+            this.lblBeginnerName.Text = "Anonymous";
             // 
-            // label8
+            // lblIntermediateTime
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(186, 50);
-            this.label8.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(62, 13);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Anonymous";
+            this.lblIntermediateTime.AutoSize = true;
+            this.lblIntermediateTime.Location = new System.Drawing.Point(186, 50);
+            this.lblIntermediateTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblIntermediateTime.Name = "lblIntermediateTime";
+            this.lblIntermediateTime.Size = new System.Drawing.Size(62, 13);
+            this.lblIntermediateTime.TabIndex = 7;
+            this.lblIntermediateTime.Text = "Anonymous";
             // 
-            // label9
+            // lblExpertTime
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(186, 73);
-            this.label9.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(62, 13);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "Anonymous";
+            this.lblExpertTime.AutoSize = true;
+            this.lblExpertTime.Location = new System.Drawing.Point(186, 73);
+            this.lblExpertTime.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lblExpertTime.Name = "lblExpertTime";
+            this.lblExpertTime.Size = new System.Drawing.Size(62, 13);
+            this.lblExpertTime.TabIndex = 8;
+            this.lblExpertTime.Text = "Anonymous";
             // 
-            // button2
+            // btnOK
             // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button2.Location = new System.Drawing.Point(189, 104);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(48, 21);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "OK";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Location = new System.Drawing.Point(189, 104);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(48, 21);
+            this.btnOK.TabIndex = 10;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btnReset
             // 
-            this.button3.Location = new System.Drawing.Point(44, 104);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(80, 21);
-            this.button3.TabIndex = 11;
-            this.button3.Text = "Reset Scores";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnReset.Location = new System.Drawing.Point(44, 104);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(80, 21);
+            this.btnReset.TabIndex = 11;
+            this.btnReset.Text = "Reset Scores";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // HighscoreScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(283, 144);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.lblExpertTime);
+            this.Controls.Add(this.lblIntermediateTime);
+            this.Controls.Add(this.lblBeginnerName);
+            this.Controls.Add(this.lblExpertName);
+            this.Controls.Add(this.lblIntermediateName);
+            this.Controls.Add(this.lblBeginnerTime);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "HighscoreScreen";
             this.Text = "Fastest Mine Sweepers";
+            this.Load += new System.EventHandler(this.HighscoreScreen_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,13 +181,13 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label lblBeginnerTime;
+        private System.Windows.Forms.Label lblIntermediateName;
+        private System.Windows.Forms.Label lblExpertName;
+        private System.Windows.Forms.Label lblBeginnerName;
+        private System.Windows.Forms.Label lblIntermediateTime;
+        private System.Windows.Forms.Label lblExpertTime;
+        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button btnReset;
     }
 }

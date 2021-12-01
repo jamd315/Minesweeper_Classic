@@ -29,12 +29,12 @@ namespace Minesweeper_Classic
         private Graphics gameboardGraphic;  // Edits gameboardBmp
 
         // Store this way because this is how the registry stores them
-        private string name1;
-        private string name2;
-        private string name3;
-        private int time1;
-        private int time2;
-        private int time3;
+        public string name1;
+        public string name2;
+        public string name3;
+        public int time1;
+        public int time2;
+        public int time3;
 
         private Point initPos;
 
@@ -200,7 +200,7 @@ namespace Minesweeper_Classic
         private void bestTimesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HighscoreScreen hs = new HighscoreScreen();
-            hs.ShowDialog();
+            hs.ShowDialog(this);
         }
 
         // Start a new game
@@ -657,7 +657,9 @@ namespace Minesweeper_Classic
                     if (timerCount < time1)
                     {
                         HighscoreEntry hse = new HighscoreEntry();
-                        hse.ShowDialog();
+                        hse.ShowDialog(this);
+                        name1 = hse.txtName.Text;
+                        time1 = timerCount;
                     }
                     break;
 
@@ -665,7 +667,9 @@ namespace Minesweeper_Classic
                     if (timerCount < time2)
                     {
                         HighscoreEntry hse = new HighscoreEntry();
-                        hse.ShowDialog();
+                        hse.ShowDialog(this);
+                        name2 = hse.txtName.Text;
+                        time2 = timerCount;
                     }
                     break;
 
@@ -673,7 +677,9 @@ namespace Minesweeper_Classic
                     if (timerCount < time3)
                     {
                         HighscoreEntry hse = new HighscoreEntry();
-                        hse.ShowDialog();
+                        hse.ShowDialog(this);
+                        name3 = hse.txtName.Text;
+                        time3 = timerCount;
                     }
                     break;
 
@@ -681,8 +687,8 @@ namespace Minesweeper_Classic
                 default:
                     break;
             }
+            saveScores();
             // TODO win sound
-            // TODO high score storage
         }
 
         // Used in handler for Game->Custom in toolstrip.  Gets and limits custom values for height, width, mines
@@ -845,6 +851,18 @@ namespace Minesweeper_Classic
                 initRegistry();
             return winmineKey;
         }
+
+        // Reset the scores
+        public void resetScores()
+        {
+            name1 = "Anonymous";
+            name2 = "Anonymous";
+            name3 = "Anonymous";
+            time1 = 999;
+            time2 = 999;
+            time3 = 999;
+            saveScores();
+        }
         #endregion Saving
 
         #region Helpers
@@ -874,6 +892,11 @@ namespace Minesweeper_Classic
         {
             //MessageBox.Show("Test2");
             saveConfig();
+        }
+
+        public Point GetLocation()
+        {
+            return this.Location;
         }
         #endregion Debug
     }
