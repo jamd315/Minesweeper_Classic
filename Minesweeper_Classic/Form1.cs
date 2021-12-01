@@ -726,7 +726,6 @@ namespace Minesweeper_Classic
                     break;
             }
             saveScores();
-            // TODO win sound
         }
 
         // Used in handler for Game->Custom in toolstrip.  Gets and limits custom values for height, width, mines
