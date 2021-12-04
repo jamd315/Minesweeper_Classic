@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Minesweeper_Classic
 {
-    public partial class Form1 : Form
+    public partial class MainGame : Form
     {
         // Settings or gamestate
         private bool color = true;
@@ -114,7 +114,7 @@ namespace Minesweeper_Classic
         }
         #endregion Enums
 
-        public Form1()
+        public MainGame()
         {
             InitializeComponent();
         }

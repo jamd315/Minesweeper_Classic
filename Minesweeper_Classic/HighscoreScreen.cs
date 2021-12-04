@@ -12,7 +12,7 @@ namespace Minesweeper_Classic
 {
     public partial class HighscoreScreen : Form
     {
-        Form1 parent;  // Reference to Form1 object, requires .ShowDialog(this) from parent
+        MainGame parent;  // Reference to Form1 object, requires .ShowDialog(this) from parent
 
         public HighscoreScreen()
         {
@@ -21,7 +21,7 @@ namespace Minesweeper_Classic
 
         private void HighscoreScreen_Load(object sender, EventArgs e)
         {
-            parent = (Form1)Owner;
+            parent = (MainGame)Owner;
             if (parent == null)
                 throw new NullReferenceException();
             displayScores();

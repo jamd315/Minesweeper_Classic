@@ -19,7 +19,7 @@ namespace Minesweeper_Classic
 
         private void HighscoreEntry_Load(object sender, EventArgs e)
         {
-            Form1 parent = (Form1)Owner;
+            MainGame parent = (MainGame)Owner;
             if (parent == null)
                 throw new NullReferenceException();
 
