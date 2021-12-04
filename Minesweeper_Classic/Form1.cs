@@ -1,5 +1,4 @@
-﻿// TODO want to unify variable names (bombs vs mines, use of tiles vs gameboard, etc)
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Drawing;
 using System.Media;
@@ -9,27 +8,28 @@ namespace Minesweeper_Classic
 {
     public partial class Form1 : Form
     {
+        // Settings or gamestate
         private bool color = true;
-
         private int timerCount = 0;
-        private int bombCount = 10;
+        private int mineCount = 10;
         private int flagCount;
         private int rows = 9;
         private int cols = 9;
         private int unclickedRemaining;
         private bool gameRunning = true;
-        private Faces faceState;
+        private Face faceState;
         private bool useQuestionMarks = true;
-        public Difficulty difficulty = Difficulty.Beginner;  // Used by HighscoreEntry form
+        public Difficulty difficulty = Difficulty.Beginner;  // Used by HighscoreEntry form, so public
         private SoundState soundState = SoundState.SoundDisabled;
 
-        private Tiles[,] gameboard;         // Array of displayed tiles
+        // Gameboard
+        private Tile[,] displayedTile;         // Array of displayed tiles
         private TileState[,] tileState;     // Whether the tile is a bomb or not
         private Bitmap gameboardBmp;        // The gameboard image displayed in picGameboard
         private Graphics gameboardGraphic;  // Edits gameboardBmp
 
         // Store this way because this is how the registry stores them
-        // Used by HighscoreScreen form
+        // Used by HighscoreScreen form, so public
         public string name1;
         public string name2;
         public string name3;
@@ -43,10 +43,10 @@ namespace Minesweeper_Classic
         SoundPlayer bombSound = new SoundPlayer(Properties.Resources.bomb);
 
 
-        private Point initPos;
+        private Point initPos = new Point(80, 80);  // Where to start the form on the screen.  Loaded from registry, default 80, 80
 
         #region Enums
-        private enum Faces: int  // Used with imgFaces, imgFaces_BW
+        private enum Face: int  // Used with imgFaces, imgFaces_BW
         {
             Dead = 0,
             Oh = 1,
@@ -55,7 +55,7 @@ namespace Minesweeper_Classic
             Sunglasses = 4
         }
 
-        private enum Tiles: int  // Used with imgTiles, imgTiles_BW, state management
+        private enum Tile: int  // Used with imgTiles, imgTiles_BW, state management
         {
             Blank = 0,
             Tile1 = 1,
@@ -156,7 +156,7 @@ namespace Minesweeper_Classic
             customToolStripMenuItem.Checked = false;
             rows = 9;
             cols = 9;
-            bombCount = 10;
+            mineCount = 10;
             difficulty = Difficulty.Beginner;
             newGame();
         }
@@ -170,7 +170,7 @@ namespace Minesweeper_Classic
             customToolStripMenuItem.Checked = false;
             rows = 16;
             cols = 16;
-            bombCount = 40;
+            mineCount = 40;
             difficulty = Difficulty.Intermediate;
             newGame();
         }
@@ -184,7 +184,7 @@ namespace Minesweeper_Classic
             customToolStripMenuItem.Checked = false;
             rows = 16;
             cols = 30;
-            bombCount = 99;
+            mineCount = 99;
             difficulty = Difficulty.Expert;
             newGame();
         }
@@ -251,14 +251,14 @@ namespace Minesweeper_Classic
         {
             if (!gameRunning)
                 return;
-            drawFace(Faces.Oh);
+            drawFace(Face.Oh);
         }
 
         private void Control_MouseUp(object sender, MouseEventArgs e)
         {
             if (!gameRunning)
                 return;
-            drawFace(Faces.Smile);
+            drawFace(Face.Smile);
 
 
             // If picGameboard is clicked use an additional handler
@@ -271,12 +271,12 @@ namespace Minesweeper_Classic
         // Do a separate pair of functions for if the button is actually pressed
         private void picFace_MouseDown(object sender, MouseEventArgs e)
         {
-            drawFace(Faces.SmilePressed);
+            drawFace(Face.SmilePressed);
         }
 
         private void picFace_MouseUp(object sender, MouseEventArgs e)
         {
-            drawFace(Faces.Smile);
+            drawFace(Face.Smile);
         }
 
         // Full click to do new game
@@ -334,7 +334,7 @@ namespace Minesweeper_Classic
         }
 
         // Redraw face and dispose the old image
-        private void drawFace(Faces f)
+        private void drawFace(Face f)
         {
             if (picFace.Image != null)
                 picFace.Image.Dispose();
@@ -379,7 +379,7 @@ namespace Minesweeper_Classic
                 {
                     pt.X = c;
                     pt.Y = r;
-                    imList.Draw(gameboardGraphic, pt, (int)Tiles.Unclicked);
+                    imList.Draw(gameboardGraphic, pt, (int)Tile.Unclicked);
                 }
             }
 
@@ -459,21 +459,21 @@ namespace Minesweeper_Classic
             timerCount = 0;
             gameRunning = true;
             unclickedRemaining = rows * cols;
-            flagCount = bombCount;
+            flagCount = mineCount;
             drawFlagCount();
             drawTimer();
-            drawFace(Faces.Smile);
+            drawFace(Face.Smile);
 
             // Init gameboard to keep track of game state
             drawGameboard();
             resizeControls();
-            gameboard = new Tiles[rows, cols];
+            displayedTile = new Tile[rows, cols];
             tileState = new TileState[rows, cols];
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    gameboard[r, c] = Tiles.Unclicked;
+                    displayedTile[r, c] = Tile.Unclicked;
                     tileState[r, c] = TileState.Nothing;
                 }
             }
@@ -481,7 +481,7 @@ namespace Minesweeper_Classic
             // Add bombs
             int bombsAdded = 0;
             Random rand = new Random();
-            while (bombsAdded != bombCount)  // Prevents adding bombs to an already bombed spot
+            while (bombsAdded != mineCount)  // Prevents adding bombs to an already bombed spot
             {
                 int bombRow = rand.Next(rows);
                 int bombCol = rand.Next(cols);
@@ -512,14 +512,12 @@ namespace Minesweeper_Classic
             if (col < 0)
                 throw new IndexOutOfRangeException("Column underflow");
 
-            //MessageBox.Show($"Clicked (x={me.X}, y={me.Y}) row {row}, col {col}");
-
             if (me.Button == MouseButtons.Left)
             {
                 if (!timCountUp.Enabled)  // Enable timer after first click
                     timCountUp.Start();
 
-                if (gameboard[row, col] == Tiles.Flag)  // Don't click flags
+                if (displayedTile[row, col] == Tile.Flag)  // Don't click flags
                     return;
 
                 // If this is the very first click and we clicked a bomb, move the bomb
@@ -529,17 +527,17 @@ namespace Minesweeper_Classic
                 }
 
                 // Switch based on the state of the clicked tile
-                if (gameboard[row, col] == Tiles.Unclicked)
+                if (displayedTile[row, col] == Tile.Unclicked)
                 {
                     int nearbyBombs = adjacentMineCount(row, col);
                     changeGameboard(row, col, nearbyBombs);
-                    gameboard[row, col] = (Tiles)nearbyBombs;
-                    if (nearbyBombs == 0)
+                    displayedTile[row, col] = (Tile)nearbyBombs;
+                    if (nearbyBombs == 0 && tileState[row, col] == TileState.Nothing)
                     {
                         clickAllAdjacent(row, col, me);
                     }
                     unclickedRemaining--;
-                    if (unclickedRemaining == bombCount)
+                    if (unclickedRemaining == mineCount)
                     {
                         win();
                     }
@@ -547,38 +545,38 @@ namespace Minesweeper_Classic
                 if (tileState[row, col] == TileState.IsBomb)
                 {
                     gameOver();
-                    changeGameboard(row, col, (int)Tiles.BombClicked);
+                    changeGameboard(row, col, (int)Tile.BombClicked);
                 }
             }
             else if (me.Button == MouseButtons.Right)  // On a right click, mark with flag, question mark (if enabled), or clear mark
             {
 
-                switch (gameboard[row, col])
+                switch (displayedTile[row, col])
                 {
-                    case Tiles.Unclicked:  // Unclicked, make it a flag
-                        changeGameboard(row, col, (int)Tiles.Flag);
-                        gameboard[row, col] = Tiles.Flag;
+                    case Tile.Unclicked:  // Unclicked, make it a flag
+                        changeGameboard(row, col, (int)Tile.Flag);
+                        displayedTile[row, col] = Tile.Flag;
                         flagCount--;
                         drawFlagCount();
                         break;
-                    case Tiles.Flag:  // Flag, make it a question, or unclicked if question marks aren't enabled
+                    case Tile.Flag:  // Flag, make it a question, or unclicked if question marks aren't enabled
                         if (useQuestionMarks)
                         {
-                            changeGameboard(row, col, (int)Tiles.QuestionUnclicked);
-                            gameboard[row, col] = Tiles.QuestionUnclicked;
+                            changeGameboard(row, col, (int)Tile.QuestionUnclicked);
+                            displayedTile[row, col] = Tile.QuestionUnclicked;
                         }
                         else
                         {
-                            changeGameboard(row, col, (int)Tiles.Unclicked);
-                            gameboard[row, col] = Tiles.Unclicked;
+                            changeGameboard(row, col, (int)Tile.Unclicked);
+                            displayedTile[row, col] = Tile.Unclicked;
                         }
                         flagCount++;
                         drawFlagCount();
                         break;
-                    case Tiles.Question:
-                    case Tiles.QuestionUnclicked:  // Question, make it unclicked
-                        changeGameboard(row, col, (int)Tiles.Unclicked);
-                        gameboard[row, col] = Tiles.Unclicked;
+                    case Tile.Question:
+                    case Tile.QuestionUnclicked:  // Question, make it unclicked
+                        changeGameboard(row, col, (int)Tile.Unclicked);
+                        displayedTile[row, col] = Tile.Unclicked;
                         break;
                 }
             }
@@ -635,7 +633,7 @@ namespace Minesweeper_Classic
         {
             gameRunning = false;
             timCountUp.Stop();
-            drawFace(Faces.Dead);
+            drawFace(Face.Dead);
             if (soundState != SoundState.SoundDisabled)
                 bombSound.Play();
 
@@ -645,16 +643,16 @@ namespace Minesweeper_Classic
                 for (int c = 0; c < cols; c++)
                 {
                     // If a bomb is hidden, but not flagged, reveal it
-                    if (tileState[r, c] == TileState.IsBomb && gameboard[r, c] != Tiles.Flag)
+                    if (tileState[r, c] == TileState.IsBomb && displayedTile[r, c] != Tile.Flag)
                     {
-                        gameboard[r, c] = Tiles.Bomb;
-                        changeGameboard(r, c, (int)Tiles.Bomb);
+                        displayedTile[r, c] = Tile.Bomb;
+                        changeGameboard(r, c, (int)Tile.Bomb);
                     }
                     // If incorrectly flagged, show the NoBomb tile
-                    if (tileState[r, c] == TileState.Nothing && gameboard[r, c] == Tiles.Flag)
+                    if (tileState[r, c] == TileState.Nothing && displayedTile[r, c] == Tile.Flag)
                     {
-                        gameboard[r, c] = Tiles.NoBomb;
-                        changeGameboard(r, c, (int)Tiles.NoBomb);
+                        displayedTile[r, c] = Tile.NoBomb;
+                        changeGameboard(r, c, (int)Tile.NoBomb);
                     }
                 }
             }
@@ -666,7 +664,7 @@ namespace Minesweeper_Classic
         {
             gameRunning = false;
             timCountUp.Stop();
-            drawFace(Faces.Sunglasses);
+            drawFace(Face.Sunglasses);
             if (soundState != SoundState.SoundDisabled)
                 winSound.Play();
 
@@ -677,8 +675,8 @@ namespace Minesweeper_Classic
                 {
                     if (tileState[r, c] == TileState.IsBomb)
                     {
-                        gameboard[r, c] = Tiles.Flag;
-                        changeGameboard(r, c, (int)Tiles.Flag);
+                        displayedTile[r, c] = Tile.Flag;
+                        changeGameboard(r, c, (int)Tile.Flag);
                     }
                 }
             }
@@ -761,7 +759,7 @@ namespace Minesweeper_Classic
             // Set the appropriate values
             rows = tmpHeight;
             cols = tmpWidth;
-            bombCount = tmpMines;
+            mineCount = tmpMines;
         }
 
         // Prevent the user from clicking a bomb on the first click
@@ -795,7 +793,7 @@ namespace Minesweeper_Classic
             difficulty = (Difficulty)winmineKey.GetValue("Difficulty", 0);
             rows = (int)winmineKey.GetValue("Height", 9);
             useQuestionMarks = (int)winmineKey.GetValue("Mark", 1) == 1;
-            bombCount = (int)winmineKey.GetValue("Mines", 10);
+            mineCount = (int)winmineKey.GetValue("Mines", 10);
             soundState = (SoundState)winmineKey.GetValue("Sound", 0);
             cols = (int)winmineKey.GetValue("Width", 9);
             int x = (int)winmineKey.GetValue("Xpos", 80);
@@ -833,7 +831,7 @@ namespace Minesweeper_Classic
             winmineKey.SetValue("Difficulty", (int)difficulty);
             winmineKey.SetValue("Height", rows);
             winmineKey.SetValue("Mark", useQuestionMarks ? 1 : 0);
-            winmineKey.SetValue("Mines", bombCount);
+            winmineKey.SetValue("Mines", mineCount);
             winmineKey.SetValue("Sound", (int)soundState);
             winmineKey.SetValue("Width", cols);
             winmineKey.SetValue("Xpos", this.Location.X);
@@ -938,19 +936,5 @@ namespace Minesweeper_Classic
             }
         }
         #endregion Helpers
-
-        #region Debug
-        private void test1ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Test1");
-            win();
-        }
-
-        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SoundPlayer simpleSound = new SoundPlayer(Properties.Resources.win);
-            simpleSound.Play();
-        }
-        #endregion Debug
     }
 }
