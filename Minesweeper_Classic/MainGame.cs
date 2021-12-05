@@ -16,7 +16,7 @@ namespace Minesweeper_Classic
         private int rows = 9;
         private int cols = 9;
         private int unclickedRemaining;
-        private bool gameRunning = true;
+        private bool gameRunning = false;
         private Face faceState;
         private bool useQuestionMarks = true;
         public Difficulty difficulty = Difficulty.Beginner;  // Used by HighscoreEntry form, so public
@@ -197,7 +197,8 @@ namespace Minesweeper_Classic
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = true;
             difficulty = Difficulty.Custom;
-            getCustomDifficulty();
+            if (gameRunning)  // When loading from config, don't prompt
+                getCustomDifficulty();
             newGame();
         }
 
@@ -325,9 +326,10 @@ namespace Minesweeper_Classic
         // Redraw flag count, disposing of old images
         private void drawFlagCount()
         {
-            int hundreds = (flagCount % 1000 - flagCount % 100) / 100;
-            int tens = (flagCount % 100 - flagCount % 10) / 10;
-            int ones = flagCount % 10;
+            int absFlagCount = Math.Abs(flagCount);
+            int hundreds = (absFlagCount % 1000 - absFlagCount % 100) / 100;
+            int tens = (absFlagCount % 100 - absFlagCount % 10) / 10;
+            int ones = absFlagCount % 10;
 
             ImageList imList;
             if (color)
@@ -337,10 +339,15 @@ namespace Minesweeper_Classic
 
             if (picFlagCountH.Image != null)
                 picFlagCountH.Image.Dispose();
-            picFlagCountH.Image = imList.Images[hundreds];
+            if (flagCount < 0)
+                picFlagCountH.Image = imList.Images[(int)SevenSegment.Dash];
+            else
+                picFlagCountH.Image = imList.Images[hundreds];
+
             if (picFlagCountT.Image != null)
                 picFlagCountT.Image.Dispose();
             picFlagCountT.Image = imList.Images[tens];
+
             if (picFlagCountO.Image != null)
                 picFlagCountO.Image.Dispose();
             picFlagCountO.Image = imList.Images[ones];
