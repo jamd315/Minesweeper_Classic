@@ -243,6 +243,19 @@ namespace Minesweeper_Classic
             else
                 soundState = SoundState.SoundDisabled;
         }
+
+        // Contains attribution stuff
+        private void aboutMinesweeperToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.ShowDialog(this);
+        }
+
+        // Help dialog
+        private void contentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Old style help files don't work past Vista, so this part I wasn't able to port", ":(", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+        }
         #endregion Toolstrip
 
         #region FaceManagement

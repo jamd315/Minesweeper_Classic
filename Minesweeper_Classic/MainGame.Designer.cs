@@ -48,7 +48,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMinesweeperToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.pnlTimer = new System.Windows.Forms.Panel();
@@ -68,7 +68,9 @@
             this.imgTiles_BW = new System.Windows.Forms.ImageList(this.components);
             this.pnlGameboard = new System.Windows.Forms.Panel();
             this.picGameboard = new System.Windows.Forms.PictureBox();
-            this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchForHelpOnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.usingHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlTimer.SuspendLayout();
@@ -228,25 +230,29 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpToolStripMenuItem1,
             this.contentsToolStripMenuItem,
+            this.searchForHelpOnToolStripMenuItem,
+            this.usingHelpToolStripMenuItem,
+            this.toolStripSeparator5,
             this.aboutMinesweeperToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
-            // helpToolStripMenuItem1
+            // contentsToolStripMenuItem
             // 
-            this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-            this.helpToolStripMenuItem1.ShortcutKeyDisplayString = "F1";
-            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.helpToolStripMenuItem1.Text = "Help";
+            this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
+            this.contentsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.contentsToolStripMenuItem.Text = "Contents";
+            this.contentsToolStripMenuItem.Click += new System.EventHandler(this.contentsToolStripMenuItem_Click);
             // 
             // aboutMinesweeperToolStripMenuItem
             // 
             this.aboutMinesweeperToolStripMenuItem.Name = "aboutMinesweeperToolStripMenuItem";
             this.aboutMinesweeperToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutMinesweeperToolStripMenuItem.Text = "About Minesweeper";
+            this.aboutMinesweeperToolStripMenuItem.Click += new System.EventHandler(this.aboutMinesweeperToolStripMenuItem_Click);
             // 
             // pnlHeader
             // 
@@ -264,7 +270,7 @@
             // 
             // pnlTimer
             // 
-            this.pnlTimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.pnlTimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlTimer.Controls.Add(this.picTimerO);
             this.pnlTimer.Controls.Add(this.picTimerT);
@@ -491,14 +497,26 @@
             this.picGameboard.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Control_MouseDown);
             this.picGameboard.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Control_MouseUp);
             // 
-            // contentsToolStripMenuItem
+            // searchForHelpOnToolStripMenuItem
             // 
-            this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            this.contentsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.contentsToolStripMenuItem.Text = "Contents";
+            this.searchForHelpOnToolStripMenuItem.Name = "searchForHelpOnToolStripMenuItem";
+            this.searchForHelpOnToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.searchForHelpOnToolStripMenuItem.Text = "Search for Help on...";
+            this.searchForHelpOnToolStripMenuItem.Click += new System.EventHandler(this.contentsToolStripMenuItem_Click);
             // 
-            // Form1
+            // usingHelpToolStripMenuItem
+            // 
+            this.usingHelpToolStripMenuItem.Name = "usingHelpToolStripMenuItem";
+            this.usingHelpToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.usingHelpToolStripMenuItem.Text = "Using Help";
+            this.usingHelpToolStripMenuItem.Click += new System.EventHandler(this.contentsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(178, 6);
+            // 
+            // MainGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -510,7 +528,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "MainGame";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Minesweeper";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -558,7 +576,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem aboutMinesweeperToolStripMenuItem;
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.ImageList imgFaces;
@@ -579,6 +596,9 @@
         private System.Windows.Forms.PictureBox picTimerH;
         private System.Windows.Forms.PictureBox picGameboard;
         private System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem searchForHelpOnToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem usingHelpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
     }
 }
 
