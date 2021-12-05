@@ -526,8 +526,12 @@ namespace Minesweeper_Classic
                     moveBomb(row, col);
                 }
 
-                // Switch based on the state of the clicked tile
-                if (displayedTile[row, col] == Tile.Unclicked)
+                if (tileState[row, col] == TileState.IsBomb)  // If you click a bomb, game over
+                {
+                    gameOver();
+                    changeGameboard(row, col, (int)Tile.BombClicked);
+                }
+                else if (displayedTile[row, col] == Tile.Unclicked)
                 {
                     int nearbyBombs = adjacentMineCount(row, col);
                     changeGameboard(row, col, nearbyBombs);
@@ -541,11 +545,6 @@ namespace Minesweeper_Classic
                     {
                         win();
                     }
-                }
-                if (tileState[row, col] == TileState.IsBomb)
-                {
-                    gameOver();
-                    changeGameboard(row, col, (int)Tile.BombClicked);
                 }
             }
             else if (me.Button == MouseButtons.Right)  // On a right click, mark with flag, question mark (if enabled), or clear mark

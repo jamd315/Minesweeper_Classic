@@ -169,6 +169,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "HighscoreScreen";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Fastest Mine Sweepers";
             this.Load += new System.EventHandler(this.HighscoreScreen_Load);
             this.ResumeLayout(false);

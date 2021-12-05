@@ -24,6 +24,12 @@ namespace Minesweeper_Classic
             parent = (MainGame)Owner;
             if (parent == null)
                 throw new NullReferenceException();
+
+            Point initLocation = parent.Location;
+            initLocation.X += 8;
+            initLocation.Y += 100;
+            this.Location = initLocation;
+
             displayScores();
         }
 
