@@ -21,6 +21,7 @@ namespace Minesweeper_Classic
         private bool useQuestionMarks = true;
         public Difficulty difficulty = Difficulty.Beginner;  // Used by HighscoreEntry form, so public
         private SoundState soundState = SoundState.SoundDisabled;
+        private bool formLoaded = false;  // Just prevents the custom difficulty form from showing up on initial config load
 
         // Gameboard
         private Tile[,] displayedTile;         // Array of displayed tiles
@@ -138,6 +139,7 @@ namespace Minesweeper_Classic
             loadScores();
             this.Location = initPos;  // Reset window to previous location
             newGame();
+            formLoaded = true;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -198,8 +200,7 @@ namespace Minesweeper_Classic
             expertToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = true;
             difficulty = Difficulty.Custom;
-            if (gameRunning)  // When loading from config, don't prompt
-                getCustomDifficulty();
+            getCustomDifficulty();
             newGame();
         }
 
@@ -700,6 +701,10 @@ namespace Minesweeper_Classic
                     }
                 }
             }
+            
+            // Just in case they weren't using flags, set the count to 0 (they found them all, we flagged anything that was unflagged)
+            flagCount = 0;
+            drawFlagCount();
 
             switch (difficulty)
             {
@@ -743,12 +748,16 @@ namespace Minesweeper_Classic
                 default:
                     break;
             }
+
             saveScores();
         }
 
         // Used in handler for Game->Custom in toolstrip.  Gets and limits custom values for height, width, mines
         private void getCustomDifficulty()
         {
+            if (!formLoaded)  // Don't run if the form isn't loaded yet (config loads before form)
+                return;
+
             CustomDifficulty cd = new CustomDifficulty();
             DialogResult dRes = cd.ShowDialog(this);
             if (dRes == DialogResult.Cancel)  // If the user cancels, don't change anything
