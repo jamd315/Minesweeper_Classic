@@ -42,8 +42,7 @@ namespace Minesweeper_Classic
         SoundPlayer tickSound = new SoundPlayer(Properties.Resources.tick);
         SoundPlayer bombSound = new SoundPlayer(Properties.Resources.bomb);
 
-
-        private Point initPos = new Point(80, 80);  // Where to start the form on the screen.  Loaded from registry, default 80, 80
+        private Point initPos = new Point(80, 80);  // Where to start the form on the screen.  Loaded from registry, default (80, 80)
 
         #region Enums
         private enum Face: int  // Used with imgFaces, imgFaces_BW
@@ -114,6 +113,7 @@ namespace Minesweeper_Classic
         }
         #endregion Enums
 
+        #region Misc
         public MainGame()
         {
             InitializeComponent();
@@ -145,6 +145,7 @@ namespace Minesweeper_Classic
             saveConfig();
             saveScores();
         }
+        #endregion Misc
 
         #region Toolstrip
         // Beginner difficulty
