@@ -126,7 +126,9 @@
             this.Controls.Add(this.lblHeight);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "CustomDifficulty";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Custom Field";
+            this.Load += new System.EventHandler(this.CustomDifficulty_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

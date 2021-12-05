@@ -16,5 +16,14 @@ namespace Minesweeper_Classic
         {
             InitializeComponent();
         }
+
+        private void CustomDifficulty_Load(object sender, EventArgs e)
+        {
+            MainGame parent = (MainGame)Owner;
+            if (parent == null)
+                throw new NullReferenceException();
+
+            this.Location = parent.Location;
+        }
     }
 }

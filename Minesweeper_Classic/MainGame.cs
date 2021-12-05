@@ -749,7 +749,7 @@ namespace Minesweeper_Classic
         private void getCustomDifficulty()
         {
             CustomDifficulty cd = new CustomDifficulty();
-            DialogResult dRes = cd.ShowDialog();
+            DialogResult dRes = cd.ShowDialog(this);
             if (dRes == DialogResult.Cancel)  // If the user cancels, don't change anything
                 return;
 
