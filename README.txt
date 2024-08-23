@@ -1,0 +1,1 @@
+The folder Minesweeper-Windows-XP is just regular old minesweeper for comparison, not the code I wrote.

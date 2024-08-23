@@ -473,6 +473,29 @@ namespace Minesweeper_Classic
             return count;
         }
 
+        // Gets the number of adjacent mines for a given tile
+        private int adjacentDisplaystateCount(int r, int c, Tile searchTile)
+        {
+            int count = 0;
+            if (r != 0 && c != 0 && displayedTile[r - 1, c - 1] == searchTile)  // Northwest
+                count++;
+            if (r != 0 && displayedTile[r - 1, c] == searchTile)  // North
+                count++;
+            if (r != 0 && c != cols - 1 && displayedTile[r - 1, c + 1] == searchTile)  // Northeast
+                count++;
+            if (c != 0 && displayedTile[r, c - 1] == searchTile)  // West
+                count++;
+            if (c != cols - 1 && displayedTile[r, c + 1] == searchTile)  // East
+                count++;
+            if (r != rows - 1 && c != 0 && displayedTile[r + 1, c - 1] == searchTile)  // Southwest
+                count++;
+            if (r != rows - 1 && displayedTile[r + 1, c] == searchTile)  // South
+                count++;
+            if (r != rows - 1 && c != cols - 1 && displayedTile[r + 1, c + 1] == searchTile)  // Southeast
+                count++;
+            return count;
+        }
+
         // Reset game state variables and start a new game
         private void newGame()
         {
@@ -568,6 +591,15 @@ namespace Minesweeper_Classic
                         win();
                     }
                 }
+                // When a tile with a number is clicked, and the number of adjacent flags matches that number,
+                // click the remaining un-clicked tiles
+                else if ((int)displayedTile[row, col] >= 1 && (int)displayedTile[row, col] <= 8)
+                {
+                    if (adjacentDisplaystateCount(row, col, Tile.Flag) == (int)displayedTile[row, col])
+                    {
+                        clickAllAdjacent(row, col, me, onlyUnclicked: true);
+                    }
+                }
             }
             else if (me.Button == MouseButtons.Right)  // On a right click, mark with flag, question mark (if enabled), or clear mark
             {
@@ -603,49 +635,73 @@ namespace Minesweeper_Classic
             }
         }
 
-        // Used when a 0 adjacency tile is clicked to flood fill
-        private void clickAllAdjacent(int r, int c, MouseEventArgs initialArgs)
+        // Used when a 0 adjacency tile is clicked to flood fill and for when a number is clicked
+        private void clickAllAdjacent(int r, int c, MouseEventArgs initialArgs, bool onlyUnclicked = false)
         {
             MouseEventArgs me;
             if (r != rows - 1)  // South
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y + 16, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r + 1, c] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y + 16, 0);
+                    gameboardClicked(null, me);
+                }
             }
             if (r != 0)  // North
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y - 16, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r - 1, c] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X, initialArgs.Y - 16, 0);
+                    gameboardClicked(null, me);
+                } 
             }
             if (c != cols - 1)  // East
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r, c + 1] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y, 0);
+                    gameboardClicked(null, me);
+                }
             }
             if (c != 0)  // West
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r, c - 1] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y, 0);
+                    gameboardClicked(null, me);
+                }
             }
             if (r != rows - 1 && c != cols - 1)  // Southeast
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y + 16, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r + 1, c + 1] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y + 16, 0);
+                    gameboardClicked(null, me);
+                }
             }
             if (r != rows - 1 && c != 0)  // Southwest
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y + 16, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r + 1, c - 1] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y + 16, 0);
+                    gameboardClicked(null, me);
+                }
             }
             if (r != 0 && c != cols - 1)  // Northeast
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y - 16, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r - 1, c + 1] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X + 16, initialArgs.Y - 16, 0);
+                    gameboardClicked(null, me);
+                }
             }
             if (r != 0 && c != 0)  // Northwest
             {
-                me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y - 16, 0);
-                gameboardClicked(null, me);
+                if (!onlyUnclicked || displayedTile[r - 1, c - 1] == Tile.Unclicked)
+                {
+                    me = new MouseEventArgs(MouseButtons.Left, 1, initialArgs.X - 16, initialArgs.Y - 16, 0);
+                    gameboardClicked(null, me);
+                }
             }
         }
 
